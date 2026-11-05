@@ -4,15 +4,13 @@ import { ArrowLeft, Sparkles } from "lucide-react";
 
 import { ScenarioForm } from "@/components/simulation/scenario-form";
 import { Badge } from "@/components/ui/badge";
-import { requireUser } from "@/lib/auth";
 import { SAMPLE_PRODUCTS } from "@/lib/catalog";
-import { checkDatabaseHealth } from "@/lib/db-health";
 
 export const metadata: Metadata = {
   title: "Skenario baru",
 };
 
-export default async function NewSimulationPage({
+export default function NewSimulationPage({
   searchParams,
 }: {
   searchParams: {
@@ -25,15 +23,12 @@ export default async function NewSimulationPage({
     demo?: string;
   };
 }) {
-  await requireUser();
-  const databaseHealth = await checkDatabaseHealth();
-
   const isDemo = searchParams.demo === "1";
   const sample = SAMPLE_PRODUCTS[0];
   const hasCustomInput = Boolean(
     searchParams.nama || searchParams.harga || searchParams.usp
   );
-  const shouldPrefillDemo = isDemo && !hasCustomInput;
+  const shouldPrefillDemo = !hasCustomInput;
 
   return (
     <div className="mx-auto max-w-[1240px] px-4 py-6 sm:px-6 lg:px-8 lg:py-9">
@@ -77,14 +72,6 @@ export default async function NewSimulationPage({
 
       <ScenarioForm
         demo={isDemo}
-        databaseIssue={
-          databaseHealth.ok
-            ? null
-            : {
-                missingTables: databaseHealth.missingTables,
-                problems: databaseHealth.problems,
-              }
-        }
         defaults={{
           name: shouldPrefillDemo ? sample.name : searchParams.nama,
           price: shouldPrefillDemo ? String(sample.basePrice) : searchParams.harga,

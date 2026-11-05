@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
 
-import { createClient } from "@/lib/supabase/server";
 import { isAIConfigured } from "@/lib/ai/model";
 import { transcribeAudio } from "@/lib/ai/transcribe";
-import { isSupabaseConfigured, SUPABASE_SETUP_MESSAGE } from "@/lib/supabase/config";
 
 export const maxDuration = 60;
 
@@ -11,26 +9,10 @@ const MAX_AUDIO_BYTES = 8 * 1024 * 1024;
 
 export async function POST(request: Request) {
   try {
-    if (!isSupabaseConfigured()) {
-      return NextResponse.json({ error: SUPABASE_SETUP_MESSAGE }, { status: 503 });
-    }
-
     if (!isAIConfigured()) {
       return NextResponse.json(
         { error: "API key AI belum diatur." },
         { status: 503 }
-      );
-    }
-
-    const supabase = createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json(
-        { error: "Sesi login tidak ditemukan. Silakan masuk kembali." },
-        { status: 401 }
       );
     }
 

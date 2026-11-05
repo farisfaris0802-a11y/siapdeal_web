@@ -1,12 +1,9 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Target } from "lucide-react";
 
-import { JudgeLoginButton } from "@/components/auth/judge-login-button";
+import { LocalDemoLink } from "@/components/auth/local-demo-link";
 import { Logo } from "@/components/logo";
 import { MobileSiteNav } from "@/components/site-mobile-nav";
-import { TransitionLink } from "@/components/transitions/pre-session-transition";
-import { Button } from "@/components/ui/button";
-import { judgeLoginAction } from "@/lib/actions/auth";
 
 const navItems = [
   { href: "/simulasi/baru", label: "Persona Buyer" },
@@ -14,7 +11,7 @@ const navItems = [
   { href: "#cara-kerja", label: "Cara Kerja" },
 ];
 
-export function SiteHeader({ isLoggedIn }: { isLoggedIn: boolean }) {
+export function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 border-b border-slate-800/60 bg-slate-950/80 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
@@ -43,41 +40,23 @@ export function SiteHeader({ isLoggedIn }: { isLoggedIn: boolean }) {
         </nav>
 
         <div className="flex shrink-0 items-center gap-2">
-          {!isLoggedIn && (
-            <form action={judgeLoginAction} className="hidden min-[390px]:flex">
-              <input type="hidden" name="next" value="/simulator" />
-              <JudgeLoginButton
-                label="Mode Demo"
-                pendingLabel="Menyiapkan..."
-                size="sm"
-                variant="ghost"
-                icon="target"
-                rememberJudgeMode
-                hideLabelOnMobile
-                transitionOnSubmit
-                className="h-9 rounded-xl border border-amber-500/40 bg-amber-500/10 px-2.5 text-xs font-semibold text-amber-300 hover:bg-amber-500/20 sm:px-3"
-              />
-            </form>
-          )}
-
-          <Button
-            asChild
-            size="sm"
-            className="h-9 rounded-xl bg-emerald-600 px-2.5 py-1 text-xs font-semibold text-white shadow-md shadow-emerald-950 transition-colors hover:bg-emerald-500 sm:h-10 sm:px-4 sm:py-0 sm:text-sm"
+          <LocalDemoLink
+            href="/simulator"
+            ariaLabel="Mode Demo"
+            className="hidden h-9 items-center gap-1.5 rounded-xl border border-amber-500/40 bg-amber-500/10 px-2.5 text-xs font-semibold text-amber-300 transition-colors hover:bg-amber-500/20 min-[390px]:inline-flex sm:px-3"
           >
-            {isLoggedIn ? (
-              <Link href="/dashboard">
-                <ArrowRight className="h-4 w-4" />
-                Dashboard
-              </Link>
-            ) : (
-              <TransitionLink href="/register">
-                <ArrowRight className="h-4 w-4" />
-                <span className="min-[360px]:hidden">Mulai</span>
-                <span className="hidden min-[360px]:inline">Mulai Gratis</span>
-              </TransitionLink>
-            )}
-          </Button>
+            <Target className="h-4 w-4" />
+            <span className="hidden sm:inline">Mode Demo</span>
+          </LocalDemoLink>
+
+          <LocalDemoLink
+            href="/simulator"
+            className="inline-flex h-9 items-center gap-2 rounded-xl bg-emerald-600 px-2.5 py-1 text-xs font-semibold text-white shadow-md shadow-emerald-950 transition-colors hover:bg-emerald-500 sm:h-10 sm:px-4 sm:py-0 sm:text-sm"
+          >
+            <ArrowRight className="h-4 w-4" />
+            <span className="min-[360px]:hidden">Mulai</span>
+            <span className="hidden min-[360px]:inline">Mulai Gratis</span>
+          </LocalDemoLink>
 
           <MobileSiteNav items={navItems} />
         </div>

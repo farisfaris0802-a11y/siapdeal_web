@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useFormState, useFormStatus } from "react-dom";
+import { useRouter } from "next/navigation";
 import {
   AlertCircle,
   ArrowRight,
@@ -22,7 +22,7 @@ import {
   Waves,
 } from "lucide-react";
 
-import { createSimulationAction } from "@/lib/actions/simulation";
+import { createLocalSession } from "@/lib/local-store";
 import {
   DIFFICULTY_META,
   PARTNER_META,
@@ -51,20 +51,13 @@ const partnerOptions: {
 
 const difficultyOptions: Difficulty[] = ["easy", "medium", "hard"];
 
-function SubmitButton({ blocked = false }: { blocked?: boolean }) {
-  const { pending } = useFormStatus();
-
+function SubmitButton({ pending = false }: { pending?: boolean }) {
   return (
-    <Button type="submit" size="lg" className="w-full" disabled={pending || blocked}>
+    <Button type="submit" size="lg" className="w-full" disabled={pending}>
       {pending ? (
         <>
           <Loader2 className="h-4 w-4 animate-spin" />
-          Menyiapkan pembeli virtual…
-        </>
-      ) : blocked ? (
-        <>
-          <AlertCircle className="h-4 w-4" />
-          Database belum siap
+          Menyiapkan pembeli virtual...
         </>
       ) : (
         <>
@@ -85,7 +78,6 @@ function formatDigits(value: string) {
 export function ScenarioForm({
   defaults,
   demo = false,
-  databaseIssue = null,
 }: {
   defaults: {
     name?: string;
@@ -96,14 +88,10 @@ export function ScenarioForm({
     category?: string;
   };
   demo?: boolean;
-  databaseIssue?: {
-    missingTables: string[];
-    problems: { table: string; code: string | null; message: string }[];
-  } | null;
 }) {
-  const [state, formAction] = useFormState(createSimulationAction, { error: null });
-
-  const databaseBlocked = Boolean(databaseIssue && databaseIssue.missingTables.length > 0);
+  const router = useRouter();
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const initialPartner = PARTNER_TYPES.includes(defaults.partner as PartnerType)
     ? (defaults.partner as PartnerType)
@@ -153,46 +141,50 @@ export function ScenarioForm({
     return `Harga dasar ${formatRupiah(priceNumber)} per unit.`;
   }, [priceNumber]);
 
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setError(null);
+
+    if (name.trim().length < 2) {
+      setError("Nama produk harus 2-120 karakter.");
+      return;
+    }
+    if (!Number.isFinite(priceNumber) || priceNumber <= 0) {
+      setError("Harga jual dasar harus berupa angka lebih dari 0.");
+      return;
+    }
+    if (usp.trim().length < 10) {
+      setError("Ceritakan keunggulan produk minimal 10 karakter.");
+      return;
+    }
+
+    setPending(true);
+    try {
+      const session = createLocalSession({
+        product: {
+          name: name.trim(),
+          base_price: priceNumber,
+          usp: usp.trim(),
+          category,
+        },
+        partnerType: partner,
+        difficulty,
+      });
+      router.push(`/simulasi/${session.id}`);
+    } catch {
+      setPending(false);
+      setError("Gagal menyiapkan sesi lokal. Coba lagi.");
+    }
+  };
+
   return (
     <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
-      <form action={formAction} className="space-y-6">
-        {databaseIssue && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Database Supabase belum lengkap</AlertTitle>
-            <AlertDescription className="space-y-2">
-              {databaseIssue.missingTables.length > 0 ? (
-                <p>
-                  Tabel yang belum ada:{" "}
-                  <strong className="font-mono text-[11px]">
-                    {databaseIssue.missingTables.join(", ")}
-                  </strong>
-                  .
-                </p>
-              ) : (
-                <p>Beberapa tabel tidak bisa diakses dengan konfigurasi saat ini.</p>
-              )}
-              <p>
-                Jalankan file{" "}
-                <code className="rounded bg-white/60 px-1 py-0.5 font-mono text-[11px]">
-                  supabase/migrations/20260101000000_init.sql
-                </code>{" "}
-                di Supabase → SQL Editor, lalu refresh halaman ini.
-              </p>
-              {databaseIssue.problems.some((problem) => !problem.code) && (
-                <p className="text-[11px] opacity-80">
-                  Detail: {databaseIssue.problems.map((problem) => problem.message).join(", ")}
-                </p>
-              )}
-            </AlertDescription>
-          </Alert>
-        )}
-
-        {state.error && (
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {error && (
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
             <AlertTitle>Skenario belum bisa dimulai</AlertTitle>
-            <AlertDescription>{state.error}</AlertDescription>
+            <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
 
@@ -481,7 +473,7 @@ export function ScenarioForm({
             Data hanya digunakan untuk sesi latihan Anda.
           </div>
           <div className="w-full sm:w-auto sm:min-w-[220px]">
-            <SubmitButton blocked={databaseBlocked} />
+            <SubmitButton pending={pending} />
           </div>
         </div>
       </form>

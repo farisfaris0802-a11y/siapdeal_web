@@ -2,29 +2,31 @@ import { NextResponse } from "next/server";
 import { streamText, type CoreMessage } from "ai";
 import { z } from "zod";
 
-import { createClient } from "@/lib/supabase/server";
-import { isSupabaseConfigured, SUPABASE_SETUP_MESSAGE } from "@/lib/supabase/config";
 import { getAIConfig, isAIConfigured } from "@/lib/ai/model";
-import {
-  buildBuyerSystemPrompt,
-} from "@/lib/ai/buyer-prompt";
+import { buildBuyerSystemPrompt } from "@/lib/ai/buyer-prompt";
+import { DIFFICULTY_META } from "@/lib/ai/personas";
 import { sanitizeAssistantText } from "@/lib/ai/sanitize";
 import { createCleanTextTransform } from "@/lib/ai/stream-cleaner";
-import type {
-  BuyerPersona,
-  ChatMessage,
-  Product,
-  SimulationSession,
-} from "@/lib/types";
 
 export const maxDuration = 60;
 
-// Beri ruang cukup untuk menyelesaikan kalimat. Nilai lama 500 terlalu
-// kecil, terutama jika provider menghitung token "thinking" ke output.
 const MAX_OUTPUT_TOKENS = 1000;
 
 const bodySchema = z.object({
-  sessionId: z.string().uuid(),
+  partnerType: z.enum(["hotel_resort_bali", "souvenir_retail", "beach_club_cafe"]),
+  difficulty: z.enum(["easy", "medium", "hard"]),
+  product: z.object({
+    name: z.string().trim().min(1).max(200),
+    base_price: z.number().positive(),
+    usp: z.string().trim().min(1).max(2000),
+    category: z.enum([
+      "kopi_minuman",
+      "makanan_olahan",
+      "spa_wellness",
+      "fashion_kriya",
+      "lainnya",
+    ]),
+  }),
   messages: z
     .array(
       z.object({
@@ -36,42 +38,15 @@ const bodySchema = z.object({
     .max(60),
 });
 
-type SessionRow = SimulationSession & {
-  products: Pick<
-    Product,
-    "id" | "name" | "base_price" | "usp" | "category"
-  > | null;
-  buyer_personas: Pick<
-    BuyerPersona,
-    "id" | "partner_type" | "difficulty" | "system_prompt" | "min_acceptable_price"
-  > | null;
-};
-
 export async function POST(request: Request) {
   try {
-    if (!isSupabaseConfigured()) {
-      return NextResponse.json({ error: SUPABASE_SETUP_MESSAGE }, { status: 503 });
-    }
-
     if (!isAIConfigured()) {
       return NextResponse.json(
         {
           error:
-            "API key AI belum diatur. Tambahkan GOOGLE_GENERATIVE_AI_API_KEY atau OPENAI_API_KEY di .env.local.",
+            "API key AI belum diatur. Tambahkan GOOGLE_GENERATIVE_AI_API_KEY atau OPENAI_API_KEY di environment Vercel.",
         },
         { status: 503 }
-      );
-    }
-
-    const supabase = createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json(
-        { error: "Sesi login tidak ditemukan. Silakan masuk kembali." },
-        { status: 401 }
       );
     }
 
@@ -80,13 +55,12 @@ export async function POST(request: Request) {
 
     if (!parsed.success) {
       return NextResponse.json(
-        { error: "Format pesan tidak valid." },
+        { error: "Format sesi negosiasi tidak valid." },
         { status: 400 }
       );
     }
 
-    const { sessionId } = parsed.data;
-    const messages = parsed.data.messages;
+    const { messages, product, partnerType, difficulty } = parsed.data;
     const lastMessage = messages[messages.length - 1];
 
     if (lastMessage.role !== "user") {
@@ -96,78 +70,11 @@ export async function POST(request: Request) {
       );
     }
 
-    const { data: sessionData, error: sessionError } = await supabase
-      .from("simulation_sessions")
-      .select(
-        "*, products(id, name, base_price, usp, category), buyer_personas(id, partner_type, difficulty, system_prompt, min_acceptable_price)"
-      )
-      .eq("id", sessionId)
-      .eq("user_id", user.id)
-      .maybeSingle();
-
-    if (sessionError) {
-      console.error("[chat] session fetch", sessionError);
-      return NextResponse.json(
-        { error: "Gagal memuat sesi simulasi." },
-        { status: 500 }
-      );
-    }
-
-    if (!sessionData) {
-      return NextResponse.json(
-        { error: "Sesi simulasi tidak ditemukan." },
-        { status: 404 }
-      );
-    }
-
-    const session = sessionData as unknown as SessionRow;
-
-    if (session.status === "completed") {
-      return NextResponse.json(
-        { error: "Sesi ini sudah selesai. Buka halaman hasil evaluasi." },
-        { status: 409 }
-      );
-    }
-
-    if (!session.products || !session.buyer_personas) {
-      return NextResponse.json(
-        { error: "Data produk atau profil pembeli tidak lengkap." },
-        { status: 422 }
-      );
-    }
-
-    // Simpan pesan pengguna. Hindari duplikasi jika request diulang.
-    const { data: recentMessages } = await supabase
-      .from("messages")
-      .select("role, content")
-      .eq("session_id", sessionId)
-      .order("created_at", { ascending: false })
-      .limit(1);
-
-    const latest = recentMessages?.[0] as Pick<ChatMessage, "role" | "content"> | undefined;
-
-    if (
-      !latest ||
-      latest.role !== "user" ||
-      latest.content.trim() !== lastMessage.content.trim()
-    ) {
-      const { error: insertUserError } = await supabase.from("messages").insert({
-        session_id: sessionId,
-        role: "user",
-        content: lastMessage.content.trim(),
-      });
-
-      if (insertUserError) {
-        console.error("[chat] insert user message", insertUserError);
-      }
-    }
-
     const system = buildBuyerSystemPrompt({
-      product: session.products,
-      partnerType: session.buyer_personas.partner_type,
-      difficulty: session.buyer_personas.difficulty,
-      minAcceptablePrice: session.buyer_personas.min_acceptable_price,
-      personaPrompt: session.buyer_personas.system_prompt,
+      product,
+      partnerType,
+      difficulty,
+      minAcceptablePrice: DIFFICULTY_META[difficulty].ceilingRatio,
     });
 
     const coreMessages: CoreMessage[] = messages
@@ -185,15 +92,11 @@ export async function POST(request: Request) {
 
     const result = streamText({
       model,
-      // System instruction dikirim terpisah, TIDAK dimasukkan ke array messages.
       system,
       messages: coreMessages,
       temperature: 0.8,
       maxTokens: MAX_OUTPUT_TOKENS,
-      // Sengaja TIDAK mengatur stopSequences. Jangan menambahkan stop token
-      // yang bisa memotong angka, harga, atau tanda baca di tengah kalimat.
       maxRetries: 1,
-      // Gemini Flash mendukung thinkingConfig; Flash Lite tidak.
       providerOptions:
         provider === "google" && supportsThinkingConfig
           ? {
@@ -202,34 +105,10 @@ export async function POST(request: Request) {
               },
             }
           : undefined,
-      // Bersihkan <think>, reasoning internal, dan kalimat analisis SEBELUM
-      // teks dikirim ke frontend. Token [[DEAL]] tetap dipertahankan untuk
-      // deteksi akhir sesi di client.
       experimental_transform: createCleanTextTransform(),
-      onFinish: async ({ text, finishReason }) => {
+      onFinish: ({ finishReason }) => {
         if (finishReason === "length") {
-          console.warn("[chat] output truncated by MAX_OUTPUT_TOKENS", {
-            maxTokens: MAX_OUTPUT_TOKENS,
-          });
-        }
-
-        const clean = sanitizeAssistantText(text);
-        if (!clean) return;
-
-        if (clean !== text.trim()) {
-          console.info("[chat] sanitized internal reasoning", {
-            removedChars: Math.max(0, text.length - clean.length),
-          });
-        }
-
-        const { error } = await supabase.from("messages").insert({
-          session_id: sessionId,
-          role: "assistant",
-          content: clean,
-        });
-
-        if (error) {
-          console.error("[chat] insert assistant message", error);
+          console.warn("[chat] output truncated by MAX_OUTPUT_TOKENS");
         }
       },
       onError: ({ error }) => {

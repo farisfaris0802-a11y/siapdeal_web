@@ -34,10 +34,12 @@ import {
 import type {
   ChatMessage,
   Difficulty,
+  Evaluation,
   PartnerType,
   ProductCategory,
   SessionOutcome,
 } from "@/lib/types";
+import { saveLocalEvaluation, saveLocalMessages } from "@/lib/local-store";
 import { cn } from "@/lib/utils";
 import { ScenarioPanel } from "@/components/simulation/scenario-panel";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -166,6 +168,7 @@ export function NegotiationChat({
   const didInitialScrollRef = useRef(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const recordingRef = useRef<RecordingSession | null>(null);
+  const messagesRef = useRef<Array<{ role: "user" | "assistant"; content: string }>>([]);
 
   useEffect(() => {
     if (typeof navigator === "undefined" || !navigator.permissions) return;
@@ -209,18 +212,30 @@ export function NegotiationChat({
         const response = await fetch("/api/evaluate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ sessionId, outcome }),
+          body: JSON.stringify({
+            sessionId,
+            outcome,
+            product,
+            partnerType,
+            difficulty,
+            messages: messagesRef.current,
+          }),
         });
 
         const payload = (await response.json().catch(() => null)) as
-          | { error?: string; evaluation?: unknown }
+          | { error?: string; evaluation?: Evaluation }
           | null;
 
         if (!response.ok) {
           throw new Error(payload?.error || "Evaluasi gagal dijalankan.");
         }
 
-        toast.success("Evaluasi selesai. Membuka hasil…");
+        if (!payload?.evaluation) {
+          throw new Error("Evaluasi tidak mengembalikan hasil.");
+        }
+
+        saveLocalEvaluation(sessionId, payload.evaluation, outcome);
+        toast.success("Evaluasi selesai. Membuka hasil...");
         router.push(`/simulasi/${sessionId}/hasil`);
         router.refresh();
       } catch (error) {
@@ -234,7 +249,7 @@ export function NegotiationChat({
         toast.error(message);
       }
     },
-    [router, sessionId]
+    [router, sessionId, product, partnerType, difficulty]
   );
 
   const {
@@ -248,7 +263,7 @@ export function NegotiationChat({
     reload,
   } = useChat({
     api: "/api/chat",
-    body: { sessionId },
+    body: { product, partnerType, difficulty },
     initialMessages: initialMessages.map((message) => ({
       id: message.id,
       role: message.role,
@@ -271,6 +286,22 @@ export function NegotiationChat({
       );
     },
   });
+
+  useEffect(() => {
+    const conversation = messages
+      .filter((message) => message.role === "user" || message.role === "assistant")
+      .map((message) => ({
+        id: message.id,
+        role: message.role as "user" | "assistant",
+        content: message.content,
+      }));
+
+    messagesRef.current = conversation.map(({ role, content }) => ({ role, content }));
+
+    if (conversation.length > 0) {
+      saveLocalMessages(sessionId, conversation);
+    }
+  }, [messages, sessionId]);
 
   const locked = isEvaluating || autoOutcome !== null;
   const hasUserMessage = messages.some((message) => message.role === "user");

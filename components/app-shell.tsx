@@ -6,23 +6,10 @@ import { MobileNav, SidebarNav } from "@/components/app-nav";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { initials } from "@/lib/utils";
-import type { User } from "@supabase/supabase-js";
 
-export function AppShell({
-  user,
-  children,
-}: {
-  user: User;
-  children: React.ReactNode;
-}) {
-  const fullName =
-    (user.user_metadata?.full_name as string | undefined) ||
-    user.email?.split("@")[0] ||
-    "Pengguna";
-  const isJudge =
-    Boolean(user.is_anonymous) || user.user_metadata?.role === "judge";
-  const email = isJudge ? "Mode demo" : user.email ?? "";
+const fullName = "Juri Demo";
 
+export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-background">
       {/* Desktop sidebar */}
@@ -65,14 +52,12 @@ export function AppShell({
                   <p className="truncate text-xs font-semibold text-primary-foreground">
                     {fullName}
                   </p>
-                  {isJudge && (
-                    <span className="shrink-0 rounded-full bg-brand-teal/15 px-1.5 py-0.5 text-[9px] font-semibold text-brand-mint">
-                      Demo
-                    </span>
-                  )}
+                  <span className="shrink-0 rounded-full bg-brand-teal/15 px-1.5 py-0.5 text-[9px] font-semibold text-brand-mint">
+                    Demo
+                  </span>
                 </div>
                 <p className="mt-0.5 truncate text-[10px] text-primary-foreground/40">
-                  {email}
+                  Mode demo lokal
                 </p>
                 <p className="mt-1 text-[9px] font-medium text-brand-mint/80">
                   Online, Free Plan
@@ -84,7 +69,7 @@ export function AppShell({
                   variant="ghost"
                   size="icon-sm"
                   className="text-primary-foreground/40 transition-colors hover:bg-primary-foreground/10 hover:text-primary-foreground"
-                  aria-label="Keluar dari akun"
+                  aria-label="Keluar"
                   title="Keluar"
                 >
                   <LogOut className="h-4 w-4" />
@@ -105,7 +90,7 @@ export function AppShell({
                 type="submit"
                 variant="ghost"
                 size="icon-sm"
-                aria-label="Keluar dari akun"
+                aria-label="Keluar"
                 className="text-primary-foreground/55 hover:bg-primary-foreground/10 hover:text-primary-foreground"
               >
                 <LogOut className="h-4 w-4" />

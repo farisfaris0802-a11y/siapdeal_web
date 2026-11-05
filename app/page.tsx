@@ -8,16 +8,14 @@ import {
   Lightbulb,
   MapPin,
   MessagesSquare,
+  Target,
 } from "lucide-react";
 
-import { JudgeLoginButton } from "@/components/auth/judge-login-button";
+import { LocalDemoLink } from "@/components/auth/local-demo-link";
 import { Logo } from "@/components/logo";
 import { ScoreRing } from "@/components/score-ring";
 import { SiteHeader } from "@/components/site-header";
-import { TransitionLink } from "@/components/transitions/pre-session-transition";
-import { judgeLoginAction } from "@/lib/actions/auth";
 import { RUBRIC_ASPECTS } from "@/lib/ai/personas";
-import { getCurrentUser } from "@/lib/auth";
 
 const steps = [
   {
@@ -40,35 +38,10 @@ const steps = [
   },
 ];
 
-function JudgeDemoForm({
-  formClassName,
-  buttonClassName,
-}: {
-  formClassName?: string;
-  buttonClassName?: string;
-}) {
-  return (
-    <form action={judgeLoginAction} className={formClassName}>
-      <input type="hidden" name="next" value="/simulasi/baru?demo=1" />
-      <JudgeLoginButton
-        label="Mode Demo"
-        pendingLabel="Menyiapkan mode demo..."
-        size="lg"
-        variant="ghost"
-        className={buttonClassName}
-        icon="sparkles"
-        transitionOnSubmit
-      />
-    </form>
-  );
-}
-
-export default async function LandingPage() {
-  const { user } = await getCurrentUser();
-
+export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background font-sans text-ink">
-      <SiteHeader isLoggedIn={Boolean(user)} />
+      <SiteHeader />
 
       <section className="relative isolate flex min-h-[85vh] flex-col overflow-hidden bg-primary text-cream sm:min-h-[calc(100svh-4rem)]">
         <Image
@@ -103,29 +76,23 @@ export default async function LandingPage() {
             </p>
 
             <div className="mt-8 flex w-full flex-col items-stretch justify-center gap-3 px-2 sm:flex-row sm:items-center">
-              <TransitionLink
-                href={user ? "/simulasi/baru" : "/register"}
+              <LocalDemoLink
+                href="/simulator"
                 className="group inline-flex w-full items-center justify-between gap-4 rounded-xl bg-cream py-3.5 pl-6 pr-2 text-sm font-semibold text-cream-foreground shadow-2xl shadow-black/20 transition-transform duration-300 hover:-translate-y-0.5 active:scale-[0.98] sm:h-14 sm:w-auto sm:min-w-[220px] sm:py-0"
               >
-                <span>{user ? "Mulai simulasi" : "Mulai Gratis"}</span>
+                <span>Mulai Gratis</span>
                 <span className="grid h-10 w-10 place-items-center rounded-full bg-primary text-cream transition-transform duration-300 group-hover:translate-x-0.5">
                   <ArrowRight className="h-4 w-4" />
                 </span>
-              </TransitionLink>
+              </LocalDemoLink>
 
-              {user ? (
-                <Link
-                  href="/dashboard"
-                  className="inline-flex w-full items-center justify-center rounded-xl border border-white/25 bg-white/10 px-4 py-3.5 text-sm font-semibold text-cream backdrop-blur-xl transition-colors hover:bg-white/20 sm:h-14 sm:w-auto sm:py-0"
-                >
-                  Buka dashboard
-                </Link>
-              ) : (
-                <JudgeDemoForm
-                  formClassName="w-full sm:w-auto"
-                  buttonClassName="h-auto w-full justify-center rounded-xl border border-white/25 bg-white/10 px-4 py-3.5 text-sm font-semibold text-cream shadow-none backdrop-blur-xl hover:bg-white/20 hover:text-cream sm:h-14 sm:w-auto sm:py-0"
-                />
-              )}
+              <LocalDemoLink
+                href="/simulator"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/25 bg-white/10 px-4 py-3.5 text-sm font-semibold text-cream backdrop-blur-xl transition-colors hover:bg-white/20 sm:h-14 sm:w-auto sm:py-0"
+              >
+                <Target className="h-4 w-4" />
+                Mode Demo
+              </LocalDemoLink>
             </div>
 
             <p className="mt-4 text-[11px] text-white/50">
