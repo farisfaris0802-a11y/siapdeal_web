@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="8" y1="4" x2="56" y2="60" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F8FAF9"/>
+      <stop offset="1" stop-color="#F1F5F3"/>
+    </linearGradient>
+    <linearGradient id="handshake" x1="10" y1="16" x2="54" y2="48" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#143A5C"/>
+      <stop offset="0.55" stop-color="#2F6B82"/>
+      <stop offset="1" stop-color="#55B69B"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="15" fill="url(#bg)"/>
+  <rect x="1" y="1" width="62" height="62" rx="14" fill="none" stroke="#E2E8E5"/>
+  <svg x="10" y="10" width="44" height="44" viewBox="0 0 24 24" fill="none">
+    <path fill="url(#handshake)" d="M11 6h3l3.29-3.3a1 1 0 0 1 1.42 0l2.58 2.59a1 1 0 0 1 0 1.41L19 9h-8v2a1 1 0 0 1-1 1 1 1 0 0 1-1-1V8a2 2 0 0 1 2-2m-6 5v4l-2.29 2.29a1 1 0 0 0 0 1.41l2.58 2.59a1 1 0 0 0 1.42 0L11 17h4a1 1 0 0 0 1-1v-1h1a1 1 0 0 0 1-1v-1h1a1 1 0 0 0 1-1v-1h-7v1a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V9Z"/>
+  </svg>
+</svg>

@@ -1,0 +1,279 @@
+/* Hallmark | redesign: full | genre: modern-minimal | theme: brand | v2.0.0
+ * critique: removed the drawn browser window, emoji icons, tracked labels and ornamental glows. The page is now a deal-room product panel, a numbered process, plain persona cards and one rubric scorecard. */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-sans: "Plus Jakarta Sans Variable", ui-sans-serif, system-ui, sans-serif;
+    --font-display: "Fraunces Variable", Georgia, "Times New Roman", serif;
+    --background: 40 30% 97%;
+    --foreground: 208 60% 20%;
+    --card: 0 0% 100%;
+    --card-foreground: 208 60% 20%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 208 60% 20%;
+    --primary: 208 65% 22%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 40 25% 94%;
+    --secondary-foreground: 208 60% 20%;
+    --muted: 38 20% 95%;
+    --muted-foreground: 210 12% 42%;
+    --accent: 164 40% 53%;
+    --accent-foreground: 208 65% 18%;
+    --destructive: 0 72% 48%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 35 15% 88%;
+    --input: 35 15% 86%;
+    --ring: 164 40% 44%;
+    --radius: 0.9rem;
+    --cream: 40 45% 88%;
+    --cream-foreground: 208 65% 18%;
+    --brand-navy: 208 65% 22%;
+    --brand-navy-soft: 196 45% 34%;
+    --brand-teal: 164 40% 53%;
+    --brand-mint: 159 43% 64%;
+    --brand-gray: 0 0% 54%;
+    --grain-dot: rgba(20, 58, 92, 0.06);
+    --scrollbar-thumb: rgba(20, 58, 92, 0.2);
+    --scrollbar-thumb-hover: rgba(20, 58, 92, 0.18);
+  }
+
+  .dark {
+    --background: 208 40% 6%;
+    --foreground: 168 25% 96%;
+    --card: 208 33% 9%;
+    --card-foreground: 168 25% 96%;
+    --popover: 208 33% 9%;
+    --popover-foreground: 168 25% 96%;
+    --primary: 164 40% 53%;
+    --primary-foreground: 208 65% 12%;
+    --secondary: 200 24% 14%;
+    --secondary-foreground: 168 25% 96%;
+    --muted: 200 24% 14%;
+    --muted-foreground: 190 12% 65%;
+    --accent: 159 43% 64%;
+    --accent-foreground: 208 65% 12%;
+    --destructive: 0 62% 45%;
+    --destructive-foreground: 168 25% 96%;
+    --border: 200 20% 18%;
+    --input: 200 20% 18%;
+    --ring: 164 40% 53%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  html,
+  body {
+    overflow-x: clip;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "ss01", "cv11";
+  }
+
+  a:focus-visible,
+  button:focus-visible,
+  [role="button"]:focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    @apply bg-accent/40 text-ink;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  .grain {
+    background-image: radial-gradient(var(--grain-dot) 1px, transparent 1px);
+    background-size: 18px 18px;
+  }
+
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb-hover);
+    border-radius: 999px;
+  }
+
+  .animate-in-up {
+    animation: in-up 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+
+  .animate-delay-1 {
+    animation-delay: 80ms;
+  }
+
+  .animate-delay-2 {
+    animation-delay: 160ms;
+  }
+
+  .animate-delay-3 {
+    animation-delay: 240ms;
+  }
+
+  .ios-pop {
+    animation: ios-pop 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+  }
+
+  .ios-sheen::after {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset-block: 0;
+    left: -55%;
+    width: 45%;
+    transform: translateX(0) skewX(-18deg);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.42),
+      transparent
+    );
+    transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .ios-sheen:hover::after,
+  .ios-sheen:focus-visible::after {
+    transform: translateX(260%) skewX(-18deg);
+  }
+}
+
+@keyframes ios-pop {
+  0% {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.94);
+  }
+  65% {
+    opacity: 1;
+    transform: translateY(1px) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ios-pop {
+    animation: none;
+  }
+
+  .ios-sheen::after {
+    display: none;
+  }
+}
+
+@keyframes voice-bar {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+@keyframes presession-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes presession-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.presession-in {
+  animation: presession-in 0.35s ease-out;
+}
+
+.presession-progress {
+  animation: presession-progress 1.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.voice-bar {
+  transform-origin: bottom;
+  animation: voice-bar 1.05s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .voice-bar {
+    animation: none;
+    transform: scaleY(0.7);
+  }
+
+  .presession-in {
+    animation: none;
+  }
+
+  .presession-progress {
+    animation: none;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes in-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chat-scroll {
+  scrollbar-gutter: stable;
+}
