@@ -51,12 +51,12 @@ export function EvaluationTrigger({
   };
 
   return (
-    <div className="rounded-2xl border border-border/80 bg-white p-6 shadow-soft sm:p-8">
+    <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-soft sm:p-8">
       <div className="mx-auto max-w-lg text-center">
         <span className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-primary/10 text-primary">
           <Sparkles className="h-5 w-5" />
         </span>
-        <h2 className="mt-4 font-display text-xl font-bold text-ink">
+        <h2 className="mt-4 font-display text-xl font-bold text-foreground">
           Evaluasi belum tersedia
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">

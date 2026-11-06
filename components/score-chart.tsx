@@ -9,7 +9,7 @@ interface Point {
 export function ScoreChart({ data }: { data: Point[] }) {
   if (data.length === 0) {
     return (
-      <div className="flex h-52 flex-col items-center justify-center rounded-xl border border-dashed border-border bg-sand-50/60 text-center">
+      <div className="flex h-52 flex-col items-center justify-center rounded-xl border border-dashed border-border bg-muted/40 text-center">
         <p className="text-sm font-medium text-muted-foreground">
           Grafik muncul setelah sesi pertama selesai dinilai.
         </p>

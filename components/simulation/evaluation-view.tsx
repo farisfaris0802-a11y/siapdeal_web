@@ -116,7 +116,7 @@ export function EvaluationView({
   return (
     <div className="space-y-6">
       {/* Hero */}
-      <section className="relative overflow-hidden rounded-3xl border border-border/80 bg-white shadow-soft">
+      <section className="relative overflow-hidden rounded-3xl border border-border/80 bg-card shadow-soft">
         <div className="relative grid gap-6 p-6 sm:p-8 lg:grid-cols-[auto_minmax(0,1fr)_270px] lg:items-center">
           <div className="flex justify-center lg:justify-start">
             <ScoreRing score={scores.overall} size={152} strokeWidth={11} />
@@ -143,7 +143,7 @@ export function EvaluationView({
               </span>
             </div>
 
-            <h2 className="mt-3 text-balance font-display text-2xl font-bold leading-tight tracking-tight text-ink sm:text-3xl">
+            <h2 className="mt-3 text-balance font-display text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl">
               {scores.summary || verdict.description}
             </h2>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
@@ -156,10 +156,10 @@ export function EvaluationView({
                 <outcome.icon className="h-3 w-3" />
                 {outcome.label}
               </Badge>
-              <Badge variant="outline" className="bg-white">
+              <Badge variant="outline" className="bg-card">
                 {partner.shortLabel}
               </Badge>
-              <Badge variant="outline" className="bg-white">
+              <Badge variant="outline" className="bg-card">
                 {diff.label}
               </Badge>
               <span className="text-[11px] text-muted-foreground">
@@ -168,30 +168,30 @@ export function EvaluationView({
             </div>
           </div>
 
-          <div className="rounded-2xl border border-border/70 bg-sand-50/80 p-4">
+          <div className="rounded-2xl border border-border/70 bg-muted/50 p-4">
             <p className="text-[10px] font-bold text-muted-foreground">
               Ringkasan sesi
             </p>
             <div className="mt-3 space-y-2.5 text-xs">
               <div className="flex items-start justify-between gap-3">
                 <span className="text-muted-foreground">Produk</span>
-                <span className="max-w-[150px] text-right font-semibold leading-snug text-ink">
+                <span className="max-w-[150px] text-right font-semibold leading-snug text-foreground">
                   {product.name}
                 </span>
               </div>
               <div className="flex items-center justify-between gap-3">
                 <span className="text-muted-foreground">Harga dasar</span>
-                <span className="font-semibold text-ink">{formatRupiah(product.base_price)}</span>
+                <span className="font-semibold text-foreground">{formatRupiah(product.base_price)}</span>
               </div>
               <div className="flex items-center justify-between gap-3">
                 <span className="text-muted-foreground">Pesan</span>
-                <span className="font-semibold text-ink">
+                <span className="font-semibold text-foreground">
                   {messages.filter((message) => message.role === "user").length} dari Anda
                 </span>
               </div>
               <div className="flex items-center justify-between gap-3">
                 <span className="text-muted-foreground">Skor tertinggi</span>
-                <span className="font-semibold text-ink">
+                <span className="font-semibold text-foreground">
                   {Math.max(...scores.aspects.map((aspect) => aspect.score))} / 100
                 </span>
               </div>
@@ -202,17 +202,17 @@ export function EvaluationView({
 
       {/* Radar profile */}
       <section className="grid gap-4 lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)]">
-        <div className="rounded-2xl border border-border/80 bg-white p-5 shadow-soft">
+        <div className="rounded-2xl border border-border/80 bg-card p-5 shadow-soft">
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="text-[10px] font-bold text-muted-foreground">
                 Profil negosiasi
               </p>
-              <h3 className="mt-1 font-display text-lg font-bold text-ink">
+              <h3 className="mt-1 font-display text-lg font-bold text-foreground">
                 Radar 5 aspek
               </h3>
             </div>
-            <Badge variant="outline" className="bg-white text-[10px]">
+            <Badge variant="outline" className="bg-card text-[10px]">
               Skala 0 sampai 100
             </Badge>
           </div>
@@ -276,7 +276,7 @@ export function EvaluationView({
             <p className="text-[10px] font-bold text-muted-foreground">
               Rubrik tetap
             </p>
-            <h3 className="mt-1 font-display text-xl font-bold text-ink">
+            <h3 className="mt-1 font-display text-xl font-bold text-foreground">
               Penilaian per aspek
             </h3>
           </div>
@@ -290,7 +290,7 @@ export function EvaluationView({
               <div
                 key={aspect.key}
                 className={cn(
-                  "rounded-2xl border border-border/80 bg-white p-5 shadow-soft",
+                  "rounded-2xl border border-border/80 bg-card p-5 shadow-soft",
                   index === scores.aspects.length - 1 && scores.aspects.length % 2 === 1
                     ? "md:col-span-2"
                     : ""
@@ -302,7 +302,7 @@ export function EvaluationView({
                       {index + 1}
                     </span>
                     <div>
-                      <p className="text-sm font-bold leading-snug text-ink">{aspect.label}</p>
+                      <p className="text-sm font-bold leading-snug text-foreground">{aspect.label}</p>
                       <p className="mt-0.5 text-[9px] font-semibold text-muted-foreground/70">
                         {RUBRIC_ASPECTS.find((item) => item.key === aspect.key)?.labelEn}
                       </p>
@@ -386,11 +386,11 @@ export function EvaluationView({
             <p className="text-[10px] font-bold text-muted-foreground">
               Saran perbaikan
             </p>
-            <h3 className="mt-1 font-display text-xl font-bold text-ink">
+            <h3 className="mt-1 font-display text-xl font-bold text-foreground">
               Kalimat yang lebih kuat untuk momen yang sama
             </h3>
           </div>
-          <Badge variant="outline" className="hidden shrink-0 gap-1 bg-white sm:inline-flex">
+          <Badge variant="outline" className="hidden shrink-0 gap-1 bg-card sm:inline-flex">
             <Sparkles className="h-3 w-3 text-primary" />
             {evaluation.rephrased_suggestions.length} contoh
           </Badge>
@@ -400,14 +400,14 @@ export function EvaluationView({
           {evaluation.rephrased_suggestions.map((suggestion, index) => (
             <div
               key={index}
-              className="overflow-hidden rounded-2xl border border-border/80 bg-white shadow-soft"
+              className="overflow-hidden rounded-2xl border border-border/80 bg-card shadow-soft"
             >
-              <div className="flex items-center justify-between gap-3 border-b border-border/60 bg-sand-50/70 px-5 py-3">
+              <div className="flex items-center justify-between gap-3 border-b border-border/60 bg-muted/40 px-5 py-3">
                 <div className="flex items-center gap-2">
-                  <span className="grid h-6 w-6 place-items-center rounded-full bg-white text-[10px] font-bold text-muted-foreground shadow-sm ring-1 ring-border">
+                  <span className="grid h-6 w-6 place-items-center rounded-full bg-card text-[10px] font-bold text-muted-foreground shadow-sm ring-1 ring-border">
                     {index + 1}
                   </span>
-                  <span className="text-xs font-bold text-ink">{suggestion.aspect_label}</span>
+                  <span className="text-xs font-bold text-foreground">{suggestion.aspect_label}</span>
                 </div>
                 <Badge variant="muted" className="text-[10px]">
                   Saran AI
@@ -444,15 +444,15 @@ export function EvaluationView({
       </section>
 
       {/* Transcript */}
-      <section className="overflow-hidden rounded-2xl border border-border/80 bg-white shadow-soft">
+      <section className="overflow-hidden rounded-2xl border border-border/80 bg-card shadow-soft">
         <details className="group">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 transition-colors hover:bg-sand-50/60">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 transition-colors hover:bg-muted/40">
             <div className="flex items-center gap-3">
               <span className="grid h-9 w-9 place-items-center rounded-xl bg-secondary text-secondary-foreground">
                 <MessageSquareQuote className="h-4 w-4" />
               </span>
               <div>
-                <p className="text-sm font-bold text-ink">Lihat transkrip lengkap</p>
+                <p className="text-sm font-bold text-foreground">Lihat transkrip lengkap</p>
                 <p className="text-[11px] text-muted-foreground">
                   {messages.length} pesan, buka untuk meninjau seluruh percakapan
                 </p>
@@ -483,7 +483,7 @@ export function EvaluationView({
                       "max-w-[86%] whitespace-pre-wrap break-words rounded-2xl px-3.5 py-2.5 text-[13px] leading-relaxed shadow-sm",
                       isUser
                         ? "rounded-tr-md bg-primary text-primary-foreground"
-                        : "rounded-tl-md border border-border/70 bg-white text-ink"
+                        : "rounded-tl-md border border-border/70 bg-card text-foreground"
                     )}
                   >
                     {content}
@@ -495,7 +495,7 @@ export function EvaluationView({
         </details>
       </section>
 
-      <div className="flex items-start gap-2 rounded-xl border border-border/60 bg-sand-50 px-4 py-3 text-[11px] leading-relaxed text-muted-foreground">
+      <div className="flex items-start gap-2 rounded-xl border border-border/60 bg-muted/50 px-4 py-3 text-[11px] leading-relaxed text-muted-foreground">
         <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-brand-navy" />
         Penilaian ini dihasilkan AI berdasarkan rubrik tetap dan bersifat panduan
         latihan. Hasil negosiasi nyata dapat berbeda tergantung konteks dan

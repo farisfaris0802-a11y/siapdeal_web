@@ -11,11 +11,11 @@ export default function NotFound() {
 
       <div className="relative flex flex-col items-center text-center">
         <Logo />
-        <span className="mt-10 grid h-14 w-14 place-items-center rounded-2xl bg-white text-primary shadow-soft ring-1 ring-border">
+        <span className="mt-10 grid h-14 w-14 place-items-center rounded-2xl bg-card text-primary shadow-soft ring-1 ring-border">
           <Compass className="h-6 w-6" />
         </span>
-        <p className="mt-6 font-display text-6xl font-bold tracking-tight text-ink">404</p>
-        <h1 className="mt-2 font-display text-2xl font-bold text-ink">
+        <p className="mt-6 font-display text-6xl font-bold tracking-tight text-foreground">404</p>
+        <h1 className="mt-2 font-display text-2xl font-bold text-foreground">
           Halaman tidak ditemukan
         </h1>
         <p className="mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">

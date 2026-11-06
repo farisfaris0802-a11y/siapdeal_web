@@ -40,8 +40,8 @@ export function SidebarNav() {
             className={cn(
               "group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-[13px] font-medium transition-colors duration-200",
               active
-                ? "bg-primary-foreground/10 text-primary-foreground ring-1 ring-inset ring-primary-foreground/15"
-                : "text-primary-foreground/55 hover:bg-primary-foreground/5 hover:text-primary-foreground"
+                ? "bg-white/10 text-white ring-1 ring-inset ring-white/15"
+                : "text-white/55 hover:bg-white/5 hover:text-white"
             )}
           >
             <item.icon
@@ -49,7 +49,7 @@ export function SidebarNav() {
                 "h-[18px] w-[18px] transition-colors",
                 active
                   ? "text-accent"
-                  : "text-primary-foreground/35 group-hover:text-accent/80"
+                  : "text-white/35 group-hover:text-accent/80"
               )}
             />
             {item.label}

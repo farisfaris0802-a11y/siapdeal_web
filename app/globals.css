@@ -61,6 +61,9 @@
     --border: 200 20% 18%;
     --input: 200 20% 18%;
     --ring: 164 40% 53%;
+    --grain-dot: rgba(255, 255, 255, 0.045);
+    --scrollbar-thumb: rgba(255, 255, 255, 0.18);
+    --scrollbar-thumb-hover: rgba(255, 255, 255, 0.26);
   }
 
   * {
@@ -89,7 +92,12 @@
   }
 
   ::selection {
-    @apply bg-accent/40 text-ink;
+    @apply bg-accent/40 text-foreground;
+  }
+
+  /* Aksen teks navy tetap terbaca di permukaan gelap. */
+  .dark [class*="text-brand-navy"] {
+    color: hsl(var(--brand-mint));
   }
 }
 

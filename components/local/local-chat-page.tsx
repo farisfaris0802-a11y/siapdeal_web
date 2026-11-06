@@ -31,7 +31,7 @@ export function LocalChatPage({ id }: { id: string }) {
     return (
       <div className="grid min-h-[60vh] place-items-center px-6 text-center">
         <div>
-          <p className="font-display text-2xl font-semibold text-ink">
+          <p className="font-display text-2xl font-semibold text-foreground">
             Sesi tidak ditemukan
           </p>
           <p className="mt-2 text-sm text-muted-foreground">
@@ -50,7 +50,7 @@ export function LocalChatPage({ id }: { id: string }) {
   }
 
   return (
-    <div className="h-[calc(100dvh-7.5rem)] p-3 sm:p-4 lg:h-screen lg:p-5">
+    <div className="h-[100dvh] overflow-hidden bg-background lg:h-screen lg:p-5">
       <NegotiationChat
         sessionId={session.id}
         product={{

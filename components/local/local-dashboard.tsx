@@ -123,7 +123,7 @@ export function LocalDashboard() {
               </p>
             </div>
           </div>
-          <span className="inline-flex items-center gap-1.5 self-start rounded-full bg-brand-navy px-3 py-1.5 text-xs font-semibold text-primary-foreground">
+          <span className="inline-flex items-center gap-1.5 self-start rounded-full bg-brand-navy px-3 py-1.5 text-xs font-semibold text-white">
             Lanjutkan <ArrowRight className="h-3.5 w-3.5" />
           </span>
         </Link>
@@ -138,7 +138,7 @@ export function LocalDashboard() {
         ].map(([label, value]) => (
           <div key={label} className="rounded-2xl border border-border/80 bg-card p-4">
             <p className="text-[11px] font-semibold text-muted-foreground">{label}</p>
-            <p className="mt-3 font-display text-3xl font-bold leading-none tracking-tight text-ink">
+            <p className="mt-3 font-display text-3xl font-bold leading-none tracking-tight text-foreground">
               {value}
             </p>
           </div>
@@ -147,7 +147,7 @@ export function LocalDashboard() {
 
       <section className="mt-8">
         <div className="mb-4 flex items-end justify-between gap-4">
-          <h2 className="font-display text-xl font-bold text-ink">
+          <h2 className="font-display text-xl font-bold text-foreground">
             Sesi latihan Anda
           </h2>
           {sessions && sessions.length > 0 ? (
@@ -166,7 +166,7 @@ export function LocalDashboard() {
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary">
               <SparklesIcon />
             </div>
-            <h3 className="mt-5 font-display text-2xl font-bold text-ink">
+            <h3 className="mt-5 font-display text-2xl font-bold text-foreground">
               Belum ada sesi latihan
             </h3>
             <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">
@@ -206,7 +206,7 @@ export function LocalDashboard() {
                     )}
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
-                        <p className="max-w-[280px] truncate text-sm font-bold text-ink sm:max-w-[420px]">
+                        <p className="max-w-[280px] truncate text-sm font-bold text-foreground sm:max-w-[420px]">
                           {session.product.name}
                         </p>
                         <Badge

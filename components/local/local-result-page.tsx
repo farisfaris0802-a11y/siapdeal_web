@@ -32,7 +32,7 @@ export function LocalResultPage({ id }: { id: string }) {
   if (!session) {
     return (
       <div className="mx-auto max-w-xl px-4 py-16 text-center">
-        <p className="font-display text-2xl font-semibold text-ink">
+        <p className="font-display text-2xl font-semibold text-foreground">
           Evaluasi tidak ditemukan
         </p>
         <p className="mt-2 text-sm text-muted-foreground">
@@ -51,7 +51,7 @@ export function LocalResultPage({ id }: { id: string }) {
   if (session.status === "active") {
     return (
       <div className="mx-auto max-w-xl px-4 py-16 text-center">
-        <p className="font-display text-2xl font-semibold text-ink">
+        <p className="font-display text-2xl font-semibold text-foreground">
           Sesi masih berlangsung
         </p>
         <Link
@@ -67,7 +67,7 @@ export function LocalResultPage({ id }: { id: string }) {
   if (!session.evaluation) {
     return (
       <div className="mx-auto max-w-xl px-4 py-16 text-center">
-        <p className="font-display text-2xl font-semibold text-ink">
+        <p className="font-display text-2xl font-semibold text-foreground">
           Evaluasi belum tersedia
         </p>
         <p className="mt-2 text-sm text-muted-foreground">
@@ -93,7 +93,7 @@ export function LocalResultPage({ id }: { id: string }) {
           <ArrowLeft className="h-3.5 w-3.5" />
           Kembali ke dashboard
         </Link>
-        <Badge variant="outline" className="gap-1 bg-white">
+        <Badge variant="outline" className="gap-1 bg-card">
           <CheckCircle2 className="h-3 w-3 text-brand-navy" />
           Sesi selesai
         </Badge>

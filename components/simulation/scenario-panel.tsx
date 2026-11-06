@@ -47,7 +47,7 @@ export function ScenarioPanel({
             Live
           </Badge>
         </div>
-        <p className="mt-2.5 font-display text-lg font-bold leading-snug text-ink">
+        <p className="mt-2.5 font-display text-lg font-bold leading-snug text-foreground">
           {product.name}
         </p>
         <p className="mt-1 text-xs text-muted-foreground">
@@ -66,7 +66,7 @@ export function ScenarioPanel({
             <div key={label} className="flex items-start gap-2">
               <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
               <span className="min-w-0 flex-1 text-muted-foreground">{label}</span>
-              <span className="max-w-[150px] break-words text-right font-semibold leading-snug text-ink">
+              <span className="max-w-[150px] break-words text-right font-semibold leading-snug text-foreground">
                 {value}
               </span>
             </div>
@@ -74,7 +74,7 @@ export function ScenarioPanel({
         </div>
 
         <div className="mt-4 rounded-xl border border-border bg-secondary p-3.5">
-          <p className="flex items-center gap-1.5 text-[11px] font-semibold text-ink">
+          <p className="flex items-center gap-1.5 text-[11px] font-semibold text-foreground">
             <Info className="h-3.5 w-3.5 text-primary" />
             Keunggulan klaim
           </p>
@@ -90,7 +90,7 @@ export function ScenarioPanel({
             <Lightbulb className="h-4 w-4" />
           </span>
           <div>
-            <p className="text-xs font-semibold text-ink">
+            <p className="text-xs font-semibold text-foreground">
               Strategi dan tips negosiasi
             </p>
             <p className="mt-0.5 text-[10px] text-muted-foreground">

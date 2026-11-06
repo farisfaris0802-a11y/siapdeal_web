@@ -106,7 +106,7 @@ export function Logo({
               wordmarkClassName
             )}
           >
-            <span className={inverted ? "text-primary-foreground" : "text-brand-navy"}>
+            <span className={inverted ? "text-white" : "text-brand-navy"}>
               SIAP
             </span>
             <span className="text-brand-teal">DEAL</span>
@@ -115,7 +115,7 @@ export function Logo({
             <span
               className={cn(
                 "mt-1 truncate text-[9px] font-medium tracking-normal",
-                inverted ? "text-primary-foreground/45" : "text-brand-gray"
+                inverted ? "text-white/45" : "text-brand-gray"
               )}
             >
               {tagline ?? DEFAULT_TAGLINE}

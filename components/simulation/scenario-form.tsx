@@ -220,8 +220,8 @@ export function ScenarioForm({
             </div>
           </CardHeader>
           <CardContent className="space-y-5 pt-6">
-            <div className="rounded-2xl border border-dashed border-primary/25 bg-sand-50/80 p-3.5">
-              <p className="flex items-center gap-1.5 text-[11px] font-bold text-ink">
+            <div className="rounded-2xl border border-dashed border-primary/25 bg-muted/50 p-3.5">
+              <p className="flex items-center gap-1.5 text-[11px] font-bold text-foreground">
                 <Wand2 className="h-3.5 w-3.5 text-primary" />
                 Isi cepat dengan produk UMKM Bali
               </p>
@@ -231,7 +231,7 @@ export function ScenarioForm({
                     key={sample.id}
                     type="button"
                     onClick={() => applySample(sample.id)}
-                    className="rounded-full border border-border bg-white px-3 py-1.5 text-[11px] font-medium text-foreground shadow-sm transition-colors hover:border-primary/40 hover:bg-primary/[0.04]"
+                    className="rounded-full border border-border bg-card px-3 py-1.5 text-[11px] font-medium text-foreground shadow-sm transition-colors hover:border-primary/40 hover:bg-primary/[0.04]"
                     title={sample.tagline}
                   >
                     {sample.name}
@@ -351,7 +351,7 @@ export function ScenarioForm({
                       "relative cursor-pointer rounded-2xl border p-4 transition focus-within:ring-2 focus-within:ring-ring/40",
                       selected
                         ? "border-primary bg-primary/[0.04] shadow-sm ring-1 ring-primary"
-                        : "border-border bg-white hover:border-primary/30 hover:bg-sand-50"
+                        : "border-border bg-card hover:border-primary/30 hover:bg-muted/50"
                     )}
                   >
                     <input
@@ -371,13 +371,13 @@ export function ScenarioForm({
                           "grid h-5 w-5 place-items-center rounded-full border transition-colors",
                           selected
                             ? "border-primary bg-primary text-primary-foreground"
-                            : "border-border bg-white"
+                            : "border-border bg-card"
                         )}
                       >
                         {selected && <Check className="h-3 w-3" strokeWidth={3} />}
                       </span>
                     </div>
-                    <p className="mt-3 text-sm font-bold leading-snug text-ink">{meta.label}</p>
+                    <p className="mt-3 text-sm font-bold leading-snug text-foreground">{meta.label}</p>
                     <p className="mt-1 flex items-center gap-1 text-[10px] font-semibold text-muted-foreground">
                       <MapPin className="h-3 w-3" />
                       {meta.location}
@@ -390,11 +390,11 @@ export function ScenarioForm({
               })}
             </div>
 
-            <div className="mt-4 flex items-center gap-2.5 rounded-xl border border-border/70 bg-sand-50 px-3.5 py-2.5 text-xs text-muted-foreground">
+            <div className="mt-4 flex items-center gap-2.5 rounded-xl border border-border/70 bg-muted/50 px-3.5 py-2.5 text-xs text-muted-foreground">
               <PartnerIcon className="h-4 w-4 text-primary" />
               <span>
                 Anda akan bernegosiasi dengan{" "}
-                <span className="font-semibold text-ink">{partnerMeta.buyerName}</span>
+                <span className="font-semibold text-foreground">{partnerMeta.buyerName}</span>
                 {", "}
                 {partnerMeta.buyerRole} di {partnerMeta.company}.
               </span>
@@ -435,7 +435,7 @@ export function ScenarioForm({
                       "cursor-pointer rounded-2xl border p-4 transition focus-within:ring-2 focus-within:ring-ring/40",
                       selected
                         ? "border-primary bg-primary/[0.04] shadow-sm ring-1 ring-primary"
-                        : "border-border bg-white hover:border-primary/30 hover:bg-sand-50"
+                        : "border-border bg-card hover:border-primary/30 hover:bg-muted/50"
                     )}
                   >
                     <input
@@ -447,7 +447,7 @@ export function ScenarioForm({
                       className="sr-only"
                     />
                     <div className="flex items-center justify-between">
-                      <span className="flex items-center gap-2 text-sm font-bold text-ink">
+                      <span className="flex items-center gap-2 text-sm font-bold text-foreground">
                         <span className={cn("h-2 w-2 rounded-full", tones[value])} />
                         {meta.label}
                       </span>
@@ -467,7 +467,7 @@ export function ScenarioForm({
           </CardContent>
         </Card>
 
-        <div className="flex flex-col gap-3 rounded-2xl border border-border/70 bg-white p-4 shadow-soft sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 rounded-2xl border border-border/70 bg-card p-4 shadow-soft sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <Lock className="h-4 w-4 text-primary" />
             Data hanya digunakan untuk sesi latihan Anda.
@@ -480,27 +480,27 @@ export function ScenarioForm({
 
       {/* Preview */}
       <div className="space-y-4 xl:sticky xl:top-8 xl:self-start">
-        <div className="relative overflow-hidden rounded-3xl bg-ink p-6 text-primary-foreground shadow-sm">
+        <div className="relative overflow-hidden rounded-3xl bg-ink p-6 text-white shadow-sm">
           <div className="pointer-events-none absolute inset-0 grain opacity-20" />
 
           <div className="relative flex items-center justify-between">
-            <p className="text-[10px] font-bold text-primary-foreground/45">
+            <p className="text-[10px] font-bold text-white/45">
               Pratinjau skenario
             </p>
-            <Badge className="border-primary-foreground/10 bg-primary-foreground/10 text-[10px] text-primary-foreground">
+            <Badge className="border-white/10 bg-white/10 text-[10px] text-white">
               Live
             </Badge>
           </div>
 
-          <div className="relative mt-5 flex items-center gap-3 border-b border-primary-foreground/10 pb-5">
-            <div className="grid h-12 w-12 place-items-center rounded-full bg-primary-foreground/10 text-2xl ring-1 ring-white/10">
+          <div className="relative mt-5 flex items-center gap-3 border-b border-white/10 pb-5">
+            <div className="grid h-12 w-12 place-items-center rounded-full bg-white/10 text-2xl ring-1 ring-white/10">
               <PartnerIcon className="h-6 w-6" />
             </div>
             <div className="min-w-0">
               <p className="truncate font-display text-lg font-bold leading-tight">
                 {partnerMeta.buyerName}
               </p>
-              <p className="truncate text-[11px] text-primary-foreground/55">
+              <p className="truncate text-[11px] text-white/55">
                 {partnerMeta.buyerRole}, {partnerMeta.company}
               </p>
             </div>
@@ -510,14 +510,14 @@ export function ScenarioForm({
             <div className="flex items-start gap-3">
               <Package className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
               <div className="min-w-0">
-                <p className="text-[10px] text-primary-foreground/40">Produk</p>
+                <p className="text-[10px] text-white/40">Produk</p>
                 <p className="truncate font-semibold">{name.trim() || "Belum diisi"}</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
               <div className="min-w-0">
-                <p className="text-[10px] text-primary-foreground/40">Harga dasar</p>
+                <p className="text-[10px] text-white/40">Harga dasar</p>
                 <p className="font-semibold">
                   {priceNumber ? `${formatRupiah(priceNumber)} / unit` : "Belum diisi"}
                 </p>
@@ -526,14 +526,14 @@ export function ScenarioForm({
             <div className="flex items-start gap-3">
               <Package className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
               <div className="min-w-0">
-                <p className="text-[10px] text-primary-foreground/40">Kategori</p>
+                <p className="text-[10px] text-white/40">Kategori</p>
                 <p className="font-semibold">{CATEGORY_LABEL[category]}</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <Target className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
               <div>
-                <p className="text-[10px] text-primary-foreground/40">Level</p>
+                <p className="text-[10px] text-white/40">Level</p>
                 <p className="font-semibold">
                   {partnerMeta.shortLabel}, {difficultyMeta.label}
                 </p>
@@ -541,12 +541,12 @@ export function ScenarioForm({
             </div>
           </div>
 
-          <div className="relative mt-5 rounded-2xl border border-primary-foreground/10 bg-white/[0.06] p-4">
+          <div className="relative mt-5 rounded-2xl border border-white/10 bg-white/[0.06] p-4">
             <p className="flex items-center gap-1.5 text-[10px] font-bold text-accent">
               <MessageSquare className="h-3.5 w-3.5" />
               Yang akan terjadi
             </p>
-            <ul className="mt-2.5 space-y-2 text-[11px] leading-relaxed text-primary-foreground/65">
+            <ul className="mt-2.5 space-y-2 text-[11px] leading-relaxed text-white/65">
               <li className="flex gap-2">
                 <ChevronRight className="mt-0.5 h-3 w-3 shrink-0 text-accent" />
                 Pembeli membuka percakapan dan meminta penawaran Anda.
@@ -562,14 +562,14 @@ export function ScenarioForm({
             </ul>
           </div>
 
-          <div className="relative mt-5 flex items-center gap-2 text-[10px] text-primary-foreground/45">
+          <div className="relative mt-5 flex items-center gap-2 text-[10px] text-white/45">
             <Clock className="h-3.5 w-3.5" />
             Estimasi 3 sampai 7 menit, 5 aspek dinilai di akhir sesi
           </div>
         </div>
 
-        <div className="rounded-2xl border border-border/70 bg-white p-4 text-xs leading-relaxed text-muted-foreground shadow-soft">
-          <p className="font-semibold text-ink">Tips sebelum mulai</p>
+        <div className="rounded-2xl border border-border/70 bg-card p-4 text-xs leading-relaxed text-muted-foreground shadow-soft">
+          <p className="font-semibold text-foreground">Tips sebelum mulai</p>
           <ul className="mt-2 space-y-1.5">
             <li>• Siapkan batas harga terendah Anda, jangan hanya mengandalkan harga dasar.</li>
             <li>• Pikirkan minimal dua alasan mengapa produk Anda layak mendapat harga tersebut.</li>

@@ -141,7 +141,7 @@ export function PreSessionTransitionProvider({
                 ? "Menginisialisasi Simulator B2B AI..."
                 : "Menyiapkan skenario negosiasi F&B Director..."}
             </p>
-            <p className="mt-2 text-[10px] text-slate-500 sm:text-[11px]">
+            <p className="mt-2 text-[10px] text-muted-foreground sm:text-[11px]">
               Menyiapkan ruang latihan Anda
             </p>
 

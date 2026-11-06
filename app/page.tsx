@@ -40,7 +40,7 @@ const steps = [
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-background font-sans text-ink">
+    <div className="min-h-screen bg-background font-sans text-foreground">
       <SiteHeader />
 
       <section className="relative isolate flex min-h-[85vh] flex-col overflow-hidden bg-primary text-cream sm:min-h-[calc(100svh-4rem)]">
@@ -174,8 +174,8 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              <div className="bg-background p-7 text-ink sm:p-10 lg:p-12">
-                <p className="text-sm font-semibold text-ink">
+              <div className="bg-background p-7 text-foreground sm:p-10 lg:p-12">
+                <p className="text-sm font-semibold text-foreground">
                   Contoh hasil evaluasi
                 </p>
                 <p className="mt-1 text-xs text-muted-foreground">
@@ -202,7 +202,7 @@ export default function LandingPage() {
                             style={{ width: `${score}%` }}
                           />
                         </span>
-                        <span className="text-[10px] font-bold text-ink">
+                        <span className="text-[10px] font-bold text-foreground">
                           {score}
                         </span>
                       </div>
@@ -211,7 +211,7 @@ export default function LandingPage() {
                 </div>
 
                 <div className="mt-7 border-t border-border pt-5">
-                  <p className="flex items-center gap-1.5 text-xs font-semibold text-ink">
+                  <p className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
                     <Lightbulb className="h-3.5 w-3.5 text-accent" />
                     Contoh saran perbaikan
                   </p>

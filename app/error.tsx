@@ -18,11 +18,11 @@ export default function GlobalError({
 
   return (
     <div className="flex min-h-[60vh] items-center justify-center px-6 py-16">
-      <div className="w-full max-w-md rounded-3xl border border-border/80 bg-white p-8 text-center shadow-soft">
+      <div className="w-full max-w-md rounded-3xl border border-border/80 bg-card p-8 text-center shadow-soft">
         <span className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-rose-100 text-rose-700">
           <AlertTriangle className="h-5 w-5" />
         </span>
-        <h1 className="mt-4 font-display text-xl font-bold text-ink">
+        <h1 className="mt-4 font-display text-xl font-bold text-foreground">
           Terjadi kesalahan
         </h1>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">

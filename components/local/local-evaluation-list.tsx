@@ -34,7 +34,7 @@ export function LocalEvaluationList() {
     <div className="mx-auto max-w-[1180px] px-4 py-7 sm:px-6 lg:px-8 lg:py-10">
       <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
         <div>
-          <h1 className="font-display text-3xl font-bold tracking-tight text-ink sm:text-4xl">
+          <h1 className="font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
             Evaluasi negosiasi Anda.
           </h1>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
@@ -64,7 +64,7 @@ export function LocalEvaluationList() {
         ].map((stat) => (
           <div key={stat.label} className="rounded-2xl border border-border bg-card p-4">
             <p className="text-[11px] font-medium text-muted-foreground">{stat.label}</p>
-            <p className="mt-2 font-display text-2xl font-bold leading-none text-ink">
+            <p className="mt-2 font-display text-2xl font-bold leading-none text-foreground">
               {stat.value}
             </p>
           </div>
@@ -73,7 +73,7 @@ export function LocalEvaluationList() {
 
       <section className="mt-8">
         <div className="mb-4 flex items-end justify-between gap-4">
-          <h2 className="font-display text-xl font-bold text-ink">Riwayat evaluasi</h2>
+          <h2 className="font-display text-xl font-bold text-foreground">Riwayat evaluasi</h2>
           <span className="text-xs text-muted-foreground">
             {sessions?.length ?? 0} sesi
           </span>
@@ -88,7 +88,7 @@ export function LocalEvaluationList() {
             <span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-accent/10 text-accent">
               <Lightbulb className="h-6 w-6" />
             </span>
-            <h3 className="mt-4 font-display text-xl font-bold text-ink">
+            <h3 className="mt-4 font-display text-xl font-bold text-foreground">
               Belum ada evaluasi
             </h3>
             <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">
@@ -117,7 +117,7 @@ export function LocalEvaluationList() {
                     <ScoreRing score={score} size={76} strokeWidth={7} />
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
-                        <p className="max-w-[280px] truncate text-sm font-bold text-ink sm:max-w-[420px]">
+                        <p className="max-w-[280px] truncate text-sm font-bold text-foreground sm:max-w-[420px]">
                           {session.product.name}
                         </p>
                         <Badge

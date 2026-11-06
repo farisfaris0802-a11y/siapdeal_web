@@ -89,7 +89,7 @@ export function AuthShell({
           <div className="flex flex-1 items-center justify-center px-5 pb-14 pt-4 sm:px-8">
             <div className="w-full max-w-[430px]">
               <div className="mb-8">
-                <h1 className="font-display text-3xl font-bold tracking-tight text-ink">
+                <h1 className="font-display text-3xl font-bold tracking-tight text-foreground">
                   {title}
                 </h1>
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
