@@ -15,6 +15,7 @@ const MAX_OUTPUT_TOKENS = 1000;
 const bodySchema = z.object({
   partnerType: z.enum(["hotel_resort_bali", "souvenir_retail", "beach_club_cafe"]),
   difficulty: z.enum(["easy", "medium", "hard"]),
+  language: z.enum(["id", "en"]).optional(),
   product: z.object({
     name: z.string().trim().min(1).max(200),
     base_price: z.number().positive(),
@@ -60,7 +61,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const { messages, product, partnerType, difficulty } = parsed.data;
+    const { messages, product, partnerType, difficulty, language } =
+      parsed.data;
     const lastMessage = messages[messages.length - 1];
 
     if (lastMessage.role !== "user") {
@@ -74,6 +76,7 @@ export async function POST(request: Request) {
       product,
       partnerType,
       difficulty,
+      language,
       minAcceptablePrice: DIFFICULTY_META[difficulty].ceilingRatio,
     });
 

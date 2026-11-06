@@ -143,9 +143,12 @@ export function EvaluationView({
               </span>
             </div>
 
-            <h2 className="mt-3 text-balance font-display text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl">
+            <p className="mt-4 text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+              Ringkasan hasil
+            </p>
+            <p className="mt-1.5 max-w-3xl text-sm font-normal leading-relaxed text-foreground sm:text-[15px]">
               {scores.summary || verdict.description}
-            </h2>
+            </p>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
               Hasil evaluasi transkrip negosiasi {product.name} dengan{" "}
               {partner.buyerName} ({partner.shortLabel}), level {diff.label.toLowerCase()}.
@@ -429,7 +432,7 @@ export function EvaluationView({
                     <Lightbulb className="h-3 w-3" />
                     Versi yang lebih kuat
                   </p>
-                  <p className="mt-2.5 text-sm font-medium leading-relaxed text-brand-navy">
+                  <p className="mt-2.5 text-sm font-normal leading-relaxed text-brand-navy">
                     “{suggestion.improved}”
                   </p>
                   <p className="mt-3 border-t border-brand-teal/25 pt-2.5 text-[11px] leading-relaxed text-brand-navy/75">

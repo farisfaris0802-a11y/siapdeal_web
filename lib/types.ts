@@ -4,6 +4,7 @@ export type PartnerType =
   | "beach_club_cafe";
 
 export type Difficulty = "easy" | "medium" | "hard";
+export type Language = "id" | "en";
 export type SessionStatus = "active" | "completed";
 export type SessionOutcome = "deal" | "no_deal" | "manual";
 export type ChatRole = "user" | "assistant";

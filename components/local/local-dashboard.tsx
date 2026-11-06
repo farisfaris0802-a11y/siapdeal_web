@@ -14,7 +14,6 @@ import {
   Waves,
 } from "lucide-react";
 
-import { DashboardSoundToggle } from "@/components/dashboard/dashboard-effects";
 import { LocalDemoLink } from "@/components/auth/local-demo-link";
 import { ScoreRing } from "@/components/score-ring";
 import { Badge } from "@/components/ui/badge";
@@ -82,7 +81,6 @@ export function LocalDashboard() {
             </p>
           </div>
           <div className="flex shrink-0 flex-wrap items-center gap-2">
-            <DashboardSoundToggle className="border-white/20 bg-white/10 text-cream hover:bg-white/20 hover:text-cream" />
             <Button
               asChild
               variant="outline"

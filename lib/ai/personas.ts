@@ -199,3 +199,12 @@ export const OPENING_MESSAGE_TEMPLATES: Record<PartnerType, string> = {
   beach_club_cafe:
     "Hai, saya {buyer}, owner {company} di Canggu. Kami sedang uji beberapa produk untuk menu sunset. Ceritakan {product} Anda: harga, MOQ, dan kenapa cocok dengan konsep beach club kami?",
 };
+
+export const OPENING_MESSAGE_TEMPLATES_EN: Record<PartnerType, string> = {
+  hotel_resort_bali:
+    "Good morning, I'm {buyer}, the F&B Director at {company}. We're evaluating suppliers for welcome amenities and the minibar. Could you walk me through your {product} offer — unit price, MOQ, certifications, and payment terms?",
+  souvenir_retail:
+    "Good afternoon, I'm {buyer} from {company}. We operate 12 stores around Kuta–Denpasar and are looking for new products for our souvenir shelves. Could you send your {product} offer: distributor price, consignment terms, and promotional support?",
+  beach_club_cafe:
+    "Hi, I'm {buyer}, the owner of {company} in Canggu. We're testing a few products for our sunset menu. Tell me about your {product}: pricing, MOQ, and why it fits our beach club concept.",
+};

@@ -19,6 +19,7 @@ const bodySchema = z.object({
   outcome: z.enum(["deal", "no_deal", "manual"]).optional(),
   partnerType: z.enum(["hotel_resort_bali", "souvenir_retail", "beach_club_cafe"]),
   difficulty: z.enum(["easy", "medium", "hard"]),
+  language: z.enum(["id", "en"]).optional(),
   product: z.object({
     name: z.string().trim().min(1).max(200),
     base_price: z.number().positive(),
@@ -63,8 +64,15 @@ export async function POST(request: Request) {
       );
     }
 
-    const { sessionId, outcome, product, partnerType, difficulty, messages } =
-      parsed.data;
+    const {
+      sessionId,
+      outcome,
+      product,
+      partnerType,
+      difficulty,
+      language,
+      messages,
+    } = parsed.data;
 
     if (!messages.some((message) => message.role === "user")) {
       return NextResponse.json(
@@ -81,14 +89,16 @@ export async function POST(request: Request) {
       product,
       partnerType,
       difficulty,
+      language,
       messages,
       outcome: outcome ?? "manual",
     });
+    const languageName =
+      language === "en" ? "English" : "Bahasa Indonesia";
 
     const baseOptions = {
       schema: evaluationResponseSchema,
-      system:
-        "Anda asesor negosiasi B2B yang ketat, adil, dan konstruktif. Nilai berdasarkan bukti dari transkrip dan rubrik. Keluarkan HANYA JSON valid sesuai schema, tanpa markdown code fence, tanpa preamble, dan seluruh teks dalam Bahasa Indonesia.",
+      system: `Anda asesor negosiasi B2B yang ketat, adil, dan konstruktif. Nilai berdasarkan bukti dari transkrip dan rubrik. Keluarkan HANYA JSON valid sesuai schema, tanpa markdown code fence, tanpa preamble, dan seluruh teks dalam ${languageName}.`,
       prompt,
       temperature: 0.2,
       maxTokens: 4000,
@@ -131,10 +141,10 @@ export async function POST(request: Request) {
     const evaluation = {
       id: crypto.randomUUID(),
       session_id: sessionId,
-      rubric_scores: toRubricScores(object),
+      rubric_scores: toRubricScores(object, language),
       strengths: object.strengths.map((item) => item.trim()),
       weaknesses: object.weaknesses.map((item) => item.trim()),
-      rephrased_suggestions: toRephrasedSuggestions(object),
+      rephrased_suggestions: toRephrasedSuggestions(object, language),
       created_at: new Date().toISOString(),
     };
 

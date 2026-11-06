@@ -62,6 +62,7 @@ export function LocalChatPage({ id }: { id: string }) {
         partnerType={session.partner_type}
         difficulty={session.difficulty}
         initialMessages={session.messages}
+        initialLanguage={session.language ?? "id"}
         isJudge
       />
     </div>

@@ -14,6 +14,7 @@ import {
   Handshake,
   Hotel,
   Info,
+  Languages,
   Lightbulb,
   Loader2,
   MessagesSquare,
@@ -41,6 +42,7 @@ import type {
   ChatMessage,
   Difficulty,
   Evaluation,
+  Language,
   PartnerType,
   ProductCategory,
   SessionOutcome,
@@ -131,6 +133,7 @@ interface NegotiationChatProps {
   partnerType: PartnerType;
   difficulty: Difficulty;
   initialMessages: ChatMessage[];
+  initialLanguage?: Language;
   isJudge?: boolean;
 }
 
@@ -144,11 +147,13 @@ export function NegotiationChat({
   partnerType,
   difficulty,
   initialMessages,
+  initialLanguage = "id",
   isJudge = false,
 }: NegotiationChatProps) {
   const router = useRouter();
   const partner = PARTNER_META[partnerType];
   const diff = DIFFICULTY_META[difficulty];
+  const [language, setLanguage] = useState<Language>(initialLanguage);
   const PartnerIcon =
     partnerType === "hotel_resort_bali"
       ? Hotel
@@ -226,6 +231,7 @@ export function NegotiationChat({
             product,
             partnerType,
             difficulty,
+            language,
             messages: messagesRef.current,
           }),
         });
@@ -257,7 +263,7 @@ export function NegotiationChat({
         toast.error(message);
       }
     },
-    [router, sessionId, product, partnerType, difficulty]
+    [router, sessionId, product, partnerType, difficulty, language]
   );
 
   const {
@@ -271,7 +277,7 @@ export function NegotiationChat({
     reload,
   } = useChat({
     api: "/api/chat",
-    body: { product, partnerType, difficulty },
+    body: { product, partnerType, difficulty, language },
     initialMessages: initialMessages.map((message) => ({
       id: message.id,
       role: message.role,
@@ -351,6 +357,7 @@ export function NegotiationChat({
     setIsTranscribing(true);
     try {
       const formData = new FormData();
+      formData.append("language", language);
       formData.append(
         "audio",
         new Blob([encodeWav(samples, sampleRate)], { type: "audio/wav" }),
@@ -550,6 +557,20 @@ export function NegotiationChat({
     setInput(suggestion);
     setCoachOpen(false);
     textareaRef.current?.focus();
+  };
+
+  const changeLanguage = (next: Language) => {
+    setLanguage(next);
+    try {
+      localStorage.setItem("siapdeal:ai-language", next);
+    } catch {
+      // Mode privat bisa memblokir localStorage.
+    }
+    toast.info(
+      next === "en"
+        ? "Balasan AI akan menggunakan English."
+        : "Balasan AI akan menggunakan Bahasa Indonesia."
+    );
   };
 
   useEffect(() => {
@@ -1237,6 +1258,50 @@ export function NegotiationChat({
             </div>
 
             <div className="px-4">
+              <div className="mt-4 flex items-center justify-between gap-3 rounded-xl border border-border/70 bg-card px-3.5 py-3">
+                <div className="flex min-w-0 items-center gap-2">
+                  <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-brand-teal/10 text-brand-navy dark:text-brand-mint">
+                    <Languages className="h-4 w-4" />
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-xs font-semibold text-foreground">
+                      Bahasa AI
+                    </p>
+                    <p className="truncate text-[10px] text-muted-foreground">
+                      Balasan, evaluasi, dan transkripsi
+                    </p>
+                  </div>
+                </div>
+                <div className="inline-flex shrink-0 rounded-full border border-border bg-background p-0.5">
+                  <button
+                    type="button"
+                    onClick={() => changeLanguage("id")}
+                    aria-pressed={language === "id"}
+                    className={cn(
+                      "rounded-full px-2.5 py-1 text-[10px] font-semibold transition-colors",
+                      language === "id"
+                        ? "bg-primary text-primary-foreground"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    ID
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => changeLanguage("en")}
+                    aria-pressed={language === "en"}
+                    className={cn(
+                      "rounded-full px-2.5 py-1 text-[10px] font-semibold transition-colors",
+                      language === "en"
+                        ? "bg-primary text-primary-foreground"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    EN
+                  </button>
+                </div>
+              </div>
+
               <div className="mt-4">
                 <ScenarioPanel
                   product={product}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   AlertCircle,
@@ -10,6 +10,7 @@ import {
   Clock,
   Hotel,
   Info,
+  Languages,
   Loader2,
   Lock,
   MapPin,
@@ -29,7 +30,12 @@ import {
   PARTNER_TYPES,
 } from "@/lib/ai/personas";
 import { CATEGORY_LABEL, PRODUCT_CATEGORIES, SAMPLE_PRODUCTS } from "@/lib/catalog";
-import type { Difficulty, PartnerType, ProductCategory } from "@/lib/types";
+import type {
+  Difficulty,
+  Language,
+  PartnerType,
+  ProductCategory,
+} from "@/lib/types";
 import { cn, formatRupiah } from "@/lib/utils";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -117,6 +123,16 @@ export function ScenarioForm({
   const [category, setCategory] = useState<ProductCategory>(initialCategory);
   const [partner, setPartner] = useState<PartnerType>(initialPartner);
   const [difficulty, setDifficulty] = useState<Difficulty>(initialDifficulty);
+  const [language, setLanguage] = useState<Language>("id");
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("siapdeal:ai-language");
+      if (stored === "en" || stored === "id") setLanguage(stored);
+    } catch {
+      // Mode privat bisa memblokir localStorage.
+    }
+  }, []);
 
   const partnerMeta = PARTNER_META[partner];
   const difficultyMeta = DIFFICULTY_META[difficulty];
@@ -169,7 +185,13 @@ export function ScenarioForm({
         },
         partnerType: partner,
         difficulty,
+        language,
       });
+      try {
+        localStorage.setItem("siapdeal:ai-language", language);
+      } catch {
+        // Abaikan jika localStorage diblokir.
+      }
       router.push(`/simulasi/${session.id}`);
     } catch {
       setPending(false);
@@ -466,6 +488,52 @@ export function ScenarioForm({
             </div>
           </CardContent>
         </Card>
+
+        <div className="rounded-2xl border border-border/70 bg-card p-4 shadow-soft">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-2.5">
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-brand-teal/10 text-brand-navy dark:text-brand-mint">
+                <Languages className="h-4 w-4" />
+              </span>
+              <div>
+                <p className="text-sm font-semibold text-foreground">
+                  Bahasa negosiasi
+                </p>
+                <p className="text-[11px] text-muted-foreground">
+                  Balasan AI, evaluasi, dan transkripsi suara.
+                </p>
+              </div>
+            </div>
+            <div className="inline-flex self-start rounded-full border border-border bg-background p-0.5 sm:self-auto">
+              <button
+                type="button"
+                onClick={() => setLanguage("id")}
+                aria-pressed={language === "id"}
+                className={cn(
+                  "rounded-full px-3 py-1.5 text-[11px] font-semibold transition-colors",
+                  language === "id"
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                Indonesia
+              </button>
+              <button
+                type="button"
+                onClick={() => setLanguage("en")}
+                aria-pressed={language === "en"}
+                className={cn(
+                  "rounded-full px-3 py-1.5 text-[11px] font-semibold transition-colors",
+                  language === "en"
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                English
+              </button>
+            </div>
+          </div>
+        </div>
 
         <div className="flex flex-col gap-3 rounded-2xl border border-border/70 bg-card p-4 shadow-soft sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2 text-xs text-muted-foreground">

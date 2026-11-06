@@ -1,9 +1,14 @@
-import { OPENING_MESSAGE_TEMPLATES, getPartnerMeta } from "@/lib/ai/personas";
+import {
+  OPENING_MESSAGE_TEMPLATES,
+  OPENING_MESSAGE_TEMPLATES_EN,
+  getPartnerMeta,
+} from "@/lib/ai/personas";
 import type {
   ChatMessage,
   ChatRole,
   Difficulty,
   Evaluation,
+  Language,
   PartnerType,
   ProductCategory,
   SessionOutcome,
@@ -25,6 +30,7 @@ export interface LocalSession {
   product: LocalProduct;
   partner_type: PartnerType;
   difficulty: Difficulty;
+  language?: Language;
   messages: ChatMessage[];
   evaluation: Evaluation | null;
 }
@@ -71,11 +77,17 @@ export function createLocalSession(input: {
   product: LocalProduct;
   partnerType: PartnerType;
   difficulty: Difficulty;
+  language?: Language;
 }) {
   const now = new Date().toISOString();
   const id = makeId();
   const meta = getPartnerMeta(input.partnerType);
-  const greeting = OPENING_MESSAGE_TEMPLATES[input.partnerType]
+  const language = input.language ?? "id";
+  const template =
+    language === "en"
+      ? OPENING_MESSAGE_TEMPLATES_EN[input.partnerType]
+      : OPENING_MESSAGE_TEMPLATES[input.partnerType];
+  const greeting = template
     .replaceAll("{buyer}", meta.buyerName)
     .replaceAll("{company}", meta.company)
     .replaceAll("{product}", input.product.name);
@@ -89,6 +101,7 @@ export function createLocalSession(input: {
     product: input.product,
     partner_type: input.partnerType,
     difficulty: input.difficulty,
+    language,
     messages: [
       {
         id: makeId(),

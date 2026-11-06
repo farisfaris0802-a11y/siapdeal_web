@@ -41,9 +41,12 @@ export async function POST(request: Request) {
       );
     }
 
+    const language =
+      formData.get("language") === "en" ? ("en" as const) : ("id" as const);
     const text = await transcribeAudio({
       bytes,
       mimeType: audio.type || "audio/wav",
+      language,
     });
 
     const cleanedText = text

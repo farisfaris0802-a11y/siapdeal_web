@@ -1,11 +1,15 @@
+import type { Language } from "@/lib/types";
+
 const PRIMARY_MODEL = "gemini-3.5-transcribe";
 const FALLBACK_MODELS = [
   "gemini-3.1-flash-lite",
   "gemini-3.6-flash",
   "gemini-3.5-flash",
 ];
-const PROMPT =
+const PROMPT_ID =
   "Transkripsikan audio ini secara verbatim dalam Bahasa Indonesia (id-ID), menggunakan aksara Latin. Audio ini berisi percakapan bisnis berbahasa Indonesia, kemungkinan dengan campuran istilah Inggris. Jangan menerjemahkan ke bahasa Hindi, India, atau bahasa lain selain Indonesia. Jangan memakai aksara Devanagari. Kembalikan hanya teks transkrip, tanpa penjelasan, tanpa tanda kutip, dan tanpa label.";
+const PROMPT_EN =
+  "Transcribe this audio verbatim in English (Latin script). This is a business negotiation conversation and may contain Indonesian names or terms. Do not translate into Hindi, Devanagari, or any language other than English. Return only the transcript text, without explanations, quotation marks, or labels.";
 
 type TranscriptionResponse = {
   candidates?: Array<{
@@ -23,7 +27,8 @@ async function requestTranscription(
   model: string,
   key: string,
   base64Audio: string,
-  mimeType: string
+  mimeType: string,
+  prompt: string
 ) {
   const response = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
@@ -37,7 +42,7 @@ async function requestTranscription(
         contents: [
           {
             parts: [
-              { text: PROMPT },
+              { text: prompt },
               {
                 inline_data: {
                   mime_type: mimeType,
@@ -133,9 +138,11 @@ async function translateToIndonesian(text: string, key: string) {
 export async function transcribeAudio({
   bytes,
   mimeType,
+  language = "id",
 }: {
   bytes: Buffer;
   mimeType: string;
+  language?: Language;
 }) {
   const key =
     process.env.GOOGLE_GENERATIVE_AI_API_KEY ?? process.env.GEMINI_API_KEY;
@@ -145,6 +152,7 @@ export async function transcribeAudio({
   }
 
   const base64Audio = bytes.toString("base64");
+  const prompt = language === "en" ? PROMPT_EN : PROMPT_ID;
   const configuredModel = process.env.AI_TRANSCRIBE_MODEL;
   const models = [
     ...(configuredModel ? [configuredModel] : []),
@@ -156,7 +164,15 @@ export async function transcribeAudio({
 
   for (const model of models) {
     try {
-      const text = await requestTranscription(model, key, base64Audio, mimeType);
+      const text = await requestTranscription(
+        model,
+        key,
+        base64Audio,
+        mimeType,
+        prompt
+      );
+
+      if (language === "en") return text;
 
       if (!needsIndonesian(text)) return text;
 

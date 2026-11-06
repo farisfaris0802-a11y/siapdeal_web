@@ -12,6 +12,7 @@ import type {
   ChatMessage,
   Difficulty,
   Evaluation,
+  Language,
   PartnerType,
   Product,
   RephrasedSuggestion,
@@ -120,6 +121,7 @@ interface EvaluationPromptInput {
   product: Pick<Product, "name" | "base_price" | "usp" | "category">;
   partnerType: PartnerType;
   difficulty: Difficulty;
+  language?: Language;
   messages: Pick<ChatMessage, "role" | "content">[];
   outcome: string | null;
 }
@@ -128,11 +130,13 @@ export function buildEvaluationPrompt({
   product,
   partnerType,
   difficulty,
+  language = "id",
   messages,
   outcome,
 }: EvaluationPromptInput) {
   const meta = getPartnerMeta(partnerType);
   const diff = getDifficultyMeta(difficulty);
+  const languageName = language === "en" ? "English" : "Bahasa Indonesia";
 
   const transcript = messages
     .map((message) => {
@@ -195,17 +199,20 @@ ${transcript}
 - Berikan skor untuk kelima aspek. Gunakan rentang penuh, jangan memberi semua skor sama.
 - Setiap feedback harus merujuk pada isi transkrip (boleh mengutip frasa singkat), bukan saran umum.
 - strengths dan weaknesses harus konkret dan berbeda satu sama lain.
-- rephrased_suggestions: pilih 2-4 momen respons pengguna yang lemah, tulis ulang menjadi kalimat yang lebih kuat dan natural dalam Bahasa Indonesia. Sertakan alasan singkat.
-- Semua teks dalam Bahasa Indonesia. Jangan menilai kepribadian, hanya perilaku negosiasi.
+- rephrased_suggestions: pilih 2-4 momen respons pengguna yang lemah, tulis ulang menjadi kalimat yang lebih kuat dan natural dalam ${languageName}. Sertakan alasan singkat.
+- Semua teks (summary, feedback, strengths, weaknesses, improved, reason) dalam ${languageName}. Jangan menilai kepribadian, hanya perilaku negosiasi.
 - Jangan menambahkan aspek di luar rubrik.`;
 }
 
-export function toRubricScores(response: EvaluationResponse): RubricScores {
+export function toRubricScores(
+  response: EvaluationResponse,
+  language: Language = "id"
+): RubricScores {
   const aspects = RUBRIC_ASPECTS.map((aspect) => {
     const value = response.aspects[aspect.key];
     return {
       key: aspect.key,
-      label: aspect.label,
+      label: language === "en" ? aspect.labelEn : aspect.label,
       score: Math.max(0, Math.min(100, Math.round(value.score))),
       feedback: value.feedback.trim(),
     };
@@ -227,15 +234,22 @@ export function toRubricScores(response: EvaluationResponse): RubricScores {
 }
 
 export function toRephrasedSuggestions(
-  response: EvaluationResponse
+  response: EvaluationResponse,
+  language: Language = "id"
 ): RephrasedSuggestion[] {
-  return response.rephrased_suggestions.map((suggestion) => ({
-    aspect: suggestion.aspect as RubricKey,
-    aspect_label: RUBRIC_LABEL_BY_KEY[suggestion.aspect as RubricKey],
-    original: suggestion.original.trim(),
-    improved: suggestion.improved.trim(),
-    reason: suggestion.reason.trim(),
-  }));
+  return response.rephrased_suggestions.map((suggestion) => {
+    const aspect = RUBRIC_ASPECTS.find((item) => item.key === suggestion.aspect);
+    return {
+      aspect: suggestion.aspect as RubricKey,
+      aspect_label:
+        language === "en"
+          ? aspect?.labelEn ?? RUBRIC_LABEL_BY_KEY[suggestion.aspect as RubricKey]
+          : RUBRIC_LABEL_BY_KEY[suggestion.aspect as RubricKey],
+      original: suggestion.original.trim(),
+      improved: suggestion.improved.trim(),
+      reason: suggestion.reason.trim(),
+    };
+  });
 }
 
 export type { Evaluation };
