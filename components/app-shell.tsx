@@ -4,9 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LogOut, PlusCircle } from "lucide-react";
 
+import { LanguageToggle } from "@/components/language-toggle";
 import { Logo } from "@/components/logo";
 import { MobileNav, SidebarNav } from "@/components/app-nav";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { useLanguage } from "@/lib/i18n";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { cn, initials } from "@/lib/utils";
@@ -15,6 +17,7 @@ const fullName = "Juri Demo";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const { t } = useLanguage();
   const isChatRoute =
     !!pathname &&
     /^\/simulasi\/[^/]+$/.test(pathname) &&
@@ -36,7 +39,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         >
           <Link href="/simulasi/baru">
             <PlusCircle className="h-4 w-4" />
-            Simulasi Baru
+            {t("Simulasi Baru")}
           </Link>
         </Button>
 
@@ -48,6 +51,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </div>
 
         <div className="relative">
+          <div className="mb-3 flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-3 py-2">
+            <span className="text-[10px] font-medium text-white/45">
+              {t("Bahasa")}
+            </span>
+            <LanguageToggle inverted compact />
+          </div>
           <div className="rounded-2xl border border-white/10 bg-white/5 p-3.5">
             <div className="flex items-center gap-2.5">
               <div className="relative">
@@ -67,7 +76,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   </span>
                 </div>
                 <p className="mt-0.5 truncate text-[10px] text-white/40">
-                  Mode demo lokal
+                  {t("Mode demo lokal")}
                 </p>
                 <p className="mt-1 text-[9px] font-medium text-brand-mint/80">
                   Online, Free Plan
@@ -97,6 +106,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <div className="flex h-14 items-center justify-between px-4">
             <Logo href="/dashboard" inverted compact />
             <div className="flex items-center gap-1">
+              <LanguageToggle inverted compact />
               <ThemeToggle
                 inverted
                 label={false}

@@ -4,6 +4,7 @@ import "@fontsource-variable/plus-jakarta-sans";
 import { Toaster } from "sonner";
 
 import { PreSessionTransitionProvider } from "@/components/transitions/pre-session-transition";
+import { LanguageProvider } from "@/lib/i18n";
 
 import "./globals.css";
 
@@ -54,7 +55,7 @@ export default function RootLayout({
       </head>
       <body className="font-sans">
         <PreSessionTransitionProvider>
-          {children}
+          <LanguageProvider>{children}</LanguageProvider>
           <Toaster
             position="top-center"
             richColors

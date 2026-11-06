@@ -2,24 +2,18 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  ClipboardCheck,
-  History,
-  LayoutDashboard,
-  PlusCircle,
-} from "lucide-react";
+import { History, LayoutDashboard, PlusCircle } from "lucide-react";
 
+import { useLanguage } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 const primaryNav = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { href: "/simulasi/baru", label: "Simulasi Baru", icon: PlusCircle, exact: false },
-  { href: "/dashboard#riwayat", label: "Riwayat Sesi", icon: History, exact: false },
-  { href: "/evaluasi", label: "Evaluasi", icon: ClipboardCheck, exact: false },
+  { href: "/evaluasi", label: "Riwayat", icon: History, exact: true },
 ];
 
 function isActive(pathname: string, href: string, exact: boolean) {
-  if (href.startsWith("/dashboard#")) return false;
   if (href === "/simulasi/baru") return pathname.startsWith("/simulasi");
   if (exact) return pathname === href;
   return pathname === href || pathname.startsWith(`${href}/`);
@@ -27,6 +21,7 @@ function isActive(pathname: string, href: string, exact: boolean) {
 
 export function SidebarNav() {
   const pathname = usePathname();
+  const { t } = useLanguage();
 
   return (
     <nav className="space-y-1">
@@ -52,7 +47,7 @@ export function SidebarNav() {
                   : "text-white/35 group-hover:text-accent/80"
               )}
             />
-            {item.label}
+            {t(item.label)}
           </Link>
         );
       })}
@@ -62,19 +57,23 @@ export function SidebarNav() {
 
 export function MobileNav() {
   const pathname = usePathname();
+  const { t } = useLanguage();
 
   const items = [
     { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { href: "/simulasi/baru", label: "Latihan", icon: PlusCircle },
-    { href: "/dashboard#riwayat", label: "Riwayat", icon: History },
-    { href: "/evaluasi", label: "Evaluasi", icon: ClipboardCheck },
+    { href: "/evaluasi", label: "Riwayat", icon: History },
   ];
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background pb-[env(safe-area-inset-bottom)] lg:hidden">
-      <div className="grid grid-cols-4">
+      <div className="grid grid-cols-3">
         {items.map((item) => {
-          const active = isActive(pathname, item.href, item.href === "/dashboard");
+          const active = isActive(
+            pathname,
+            item.href,
+            item.href === "/dashboard" || item.href === "/evaluasi"
+          );
 
           return (
             <Link
@@ -86,7 +85,7 @@ export function MobileNav() {
               )}
             >
               <item.icon className="h-5 w-5" />
-              {item.label}
+              {t(item.label)}
             </Link>
           );
         })}

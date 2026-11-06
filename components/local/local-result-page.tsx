@@ -7,10 +7,12 @@ import { ArrowLeft, CheckCircle2 } from "lucide-react";
 
 import { EvaluationView } from "@/components/simulation/evaluation-view";
 import { Badge } from "@/components/ui/badge";
+import { useLanguage } from "@/lib/i18n";
 import { getLocalSession, type LocalSession } from "@/lib/local-store";
 
 export function LocalResultPage({ id }: { id: string }) {
   const router = useRouter();
+  const { t } = useLanguage();
   const [session, setSession] = useState<LocalSession | null | undefined>(undefined);
 
   useEffect(() => {
@@ -24,7 +26,7 @@ export function LocalResultPage({ id }: { id: string }) {
   if (session === undefined) {
     return (
       <div className="grid min-h-[60vh] place-items-center text-sm text-muted-foreground">
-        Memuat hasil evaluasi...
+        {t("Memuat hasil evaluasi...")}
       </div>
     );
   }
@@ -33,16 +35,16 @@ export function LocalResultPage({ id }: { id: string }) {
     return (
       <div className="mx-auto max-w-xl px-4 py-16 text-center">
         <p className="font-display text-2xl font-semibold text-foreground">
-          Evaluasi tidak ditemukan
+          {t("Evaluasi tidak ditemukan")}
         </p>
         <p className="mt-2 text-sm text-muted-foreground">
-          Sesi lokal tidak tersedia di browser ini.
+          {t("Sesi lokal tidak tersedia di browser ini.")}
         </p>
         <Link
           href="/simulasi/baru?demo=1"
           className="mt-5 inline-flex rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground"
         >
-          Mulai sesi baru
+          {t("Mulai sesi baru")}
         </Link>
       </div>
     );
@@ -52,13 +54,13 @@ export function LocalResultPage({ id }: { id: string }) {
     return (
       <div className="mx-auto max-w-xl px-4 py-16 text-center">
         <p className="font-display text-2xl font-semibold text-foreground">
-          Sesi masih berlangsung
+          {t("Sesi masih berlangsung")}
         </p>
         <Link
           href={`/simulasi/${id}`}
           className="mt-5 inline-flex rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground"
         >
-          Kembali ke negosiasi
+          {t("Kembali ke negosiasi")}
         </Link>
       </div>
     );
@@ -68,16 +70,16 @@ export function LocalResultPage({ id }: { id: string }) {
     return (
       <div className="mx-auto max-w-xl px-4 py-16 text-center">
         <p className="font-display text-2xl font-semibold text-foreground">
-          Evaluasi belum tersedia
+          {t("Evaluasi belum tersedia")}
         </p>
         <p className="mt-2 text-sm text-muted-foreground">
-          Selesaikan sesi negosiasi untuk mendapatkan skor 5 aspek.
+          {t("Selesaikan sesi negosiasi untuk mendapatkan skor 5 aspek.")}
         </p>
         <Link
           href={`/simulasi/${id}`}
           className="mt-5 inline-flex rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground"
         >
-          Kembali ke sesi
+          {t("Kembali ke sesi")}
         </Link>
       </div>
     );
@@ -91,11 +93,11 @@ export function LocalResultPage({ id }: { id: string }) {
           className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
-          Kembali ke dashboard
+          {t("Kembali ke dashboard")}
         </Link>
         <Badge variant="outline" className="gap-1 bg-card">
           <CheckCircle2 className="h-3 w-3 text-brand-navy" />
-          Sesi selesai
+          {t("Sesi selesai")}
         </Badge>
       </div>
 

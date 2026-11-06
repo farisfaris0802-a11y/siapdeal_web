@@ -51,6 +51,7 @@ import { saveLocalEvaluation, saveLocalMessages } from "@/lib/local-store";
 import { cn } from "@/lib/utils";
 import { ScenarioPanel } from "@/components/simulation/scenario-panel";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { useLanguage } from "@/lib/i18n";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -147,13 +148,14 @@ export function NegotiationChat({
   partnerType,
   difficulty,
   initialMessages,
-  initialLanguage = "id",
+  initialLanguage,
   isJudge = false,
 }: NegotiationChatProps) {
   const router = useRouter();
+  const { language, setLanguage, t } = useLanguage();
   const partner = PARTNER_META[partnerType];
   const diff = DIFFICULTY_META[difficulty];
-  const [language, setLanguage] = useState<Language>(initialLanguage);
+  const sessionLanguageApplied = useRef(false);
   const PartnerIcon =
     partnerType === "hotel_resort_bali"
       ? Hotel
@@ -172,6 +174,12 @@ export function NegotiationChat({
   const [autoOutcome, setAutoOutcome] = useState<Exclude<SessionOutcome, "manual"> | null>(
     null
   );
+
+  useEffect(() => {
+    if (sessionLanguageApplied.current || !initialLanguage) return;
+    sessionLanguageApplied.current = true;
+    if (initialLanguage !== language) setLanguage(initialLanguage);
+  }, [initialLanguage, language, setLanguage]);
 
   const autoTriggeredRef = useRef(false);
   const evaluationInFlightRef = useRef(false);
@@ -561,11 +569,6 @@ export function NegotiationChat({
 
   const changeLanguage = (next: Language) => {
     setLanguage(next);
-    try {
-      localStorage.setItem("siapdeal:ai-language", next);
-    } catch {
-      // Mode privat bisa memblokir localStorage.
-    }
     toast.info(
       next === "en"
         ? "Balasan AI akan menggunakan English."
@@ -724,7 +727,7 @@ export function NegotiationChat({
                 </span>
               </div>
               <p className="mt-0.5 truncate text-[11px] leading-tight text-muted-foreground">
-                Online · {partner.buyerRole}
+                {t("Online")} · {partner.buyerRole}
               </p>
             </div>
 
@@ -736,7 +739,7 @@ export function NegotiationChat({
               className="-mr-1 inline-flex h-10 shrink-0 items-center gap-1 rounded-full bg-rose-50 px-3 text-[11px] font-semibold text-rose-700 transition-colors active:bg-rose-100 disabled:opacity-40 dark:bg-rose-500/15 dark:text-rose-300 dark:active:bg-rose-500/25"
             >
               <CircleStop className="h-3.5 w-3.5" />
-              Akhiri
+              {t("Akhiri")}
             </button>
           </div>
 
@@ -754,7 +757,7 @@ export function NegotiationChat({
               {product.name}
             </span>
             <span className="shrink-0 rounded-full bg-card px-1.5 py-0.5 text-[9px] font-semibold text-muted-foreground ring-1 ring-inset ring-border/70">
-              Level {diff.label}
+              Level {t(diff.label)}
             </span>
             <ChevronRight className="ml-auto h-3.5 w-3.5 shrink-0 text-muted-foreground/80" />
           </button>
@@ -781,10 +784,10 @@ export function NegotiationChat({
                 variant={difficulty === "hard" ? "destructive" : difficulty === "medium" ? "warning" : "success"}
                 className="text-[10px]"
               >
-                Level: {diff.label}
+                Level: {t(diff.label)}
               </Badge>
               <span className="text-[10px] font-semibold text-brand-navy">
-                Sesi aktif, {isJudge ? "Mode Demo" : "Fast Demo"}
+                {t("Sesi aktif, {mode}", { mode: isJudge ? t("Mode Demo") : "Fast Demo" })}
               </span>
             </div>
             <h1 className="mt-1 truncate font-display text-lg font-bold leading-tight text-foreground sm:text-xl">
@@ -800,18 +803,14 @@ export function NegotiationChat({
             className="h-auto min-h-9 gap-1.5 border-border bg-card text-[11px] text-muted-foreground hover:border-brand-teal/25 hover:text-brand-navy xl:hidden"
             onClick={() => setInfoOpen(true)}
           >
-            <PanelRight className="h-4 w-4" />
-            Detail Skenario
-          </Button>
+            <PanelRight className="h-4 w-4" />{t("Detail Skenario")}</Button>
           <Button
             size="sm"
             className="h-auto min-h-9 w-full shrink-0 gap-1.5 whitespace-normal border border-rose-200 bg-rose-50 px-4 py-2 text-[11px] font-semibold text-rose-700 shadow-sm transition duration-200 hover:bg-rose-100 sm:w-auto sm:text-xs"
             onClick={() => setEndOpen(true)}
             disabled={locked}
           >
-            <CircleStop className="h-4 w-4" />
-            Selesaikan &amp; Lihat Evaluasi Deal
-          </Button>
+            <CircleStop className="h-4 w-4" />{t("Selesaikan &amp; Lihat Evaluasi Deal")}</Button>
         </div>
       </div>
 
@@ -832,25 +831,19 @@ export function NegotiationChat({
                   <Badge
                     variant="outline"
                     className="border-primary-foreground/15 bg-primary-foreground/10 text-[9px] font-medium text-primary-foreground/75"
-                  >
-                    Mitra B2B
-                  </Badge>
+                  >{t("Mitra B2B")}</Badge>
                 </div>
                 <p className="truncate text-[10px] text-primary-foreground/60">
                   {partner.buyerRole}, {partner.company}
                 </p>
-                <p className="mt-0.5 text-[9px] text-primary-foreground/55">
-                  Online, siap bernegosiasi
-                </p>
+                <p className="mt-0.5 text-[9px] text-primary-foreground/55">{t("Online, siap bernegosiasi")}</p>
               </div>
             </div>
             <Badge
               variant="outline"
               className="shrink-0 gap-1 border-primary-foreground/15 bg-primary-foreground/10 text-[9px] text-primary-foreground/80"
             >
-              <Sparkles className="h-3 w-3 text-accent" />
-              AI Negotiator
-            </Badge>
+              <Sparkles className="h-3 w-3 text-accent" />{t("AI Negotiator")}</Badge>
           </div>
 
           {/* Messages */}
@@ -863,7 +856,7 @@ export function NegotiationChat({
             <div className="flex flex-col gap-3.5 lg:gap-4">
               <div className="mx-auto flex w-fit max-w-full items-center gap-1.5 rounded-full border border-border/60 bg-card/80 px-2.5 py-1 text-[10px] font-medium leading-relaxed text-muted-foreground">
                 <ShieldCheck className="h-3 w-3 shrink-0 text-brand-teal" />
-                <span className="truncate">Sesi latihan · AI berperan sebagai pembeli</span>
+                <span className="truncate">{t("Sesi latihan · AI berperan sebagai pembeli")}</span>
               </div>
 
               {messages.map((message, index) => {
@@ -1044,7 +1037,7 @@ export function NegotiationChat({
                 </span>
                 {quickStarts.map((starter) => (
                   <button
-                    key={starter.label}
+                    key={t(starter.label)}
                     type="button"
                     onClick={() => {
                       setInput(starter.text);
@@ -1052,7 +1045,7 @@ export function NegotiationChat({
                     }}
                     className="shrink-0 rounded-full border border-brand-teal/25 bg-brand-teal/5 px-3.5 py-2 text-[11px] font-semibold text-brand-navy transition-colors active:bg-brand-teal/15"
                   >
-                    {starter.label}
+                    {t(starter.label)}
                   </button>
                 ))}
               </div>
@@ -1065,9 +1058,7 @@ export function NegotiationChat({
                 disabled={locked}
                 className="inline-flex items-center gap-1.5 rounded-full border border-brand-teal/25 bg-brand-teal/10 px-3 py-1.5 text-[10px] font-semibold text-brand-navy transition-colors hover:bg-brand-teal/15 disabled:opacity-50"
               >
-                <Lightbulb className="h-3.5 w-3.5" />
-                Tanya Coach AI
-              </button>
+                <Lightbulb className="h-3.5 w-3.5" />{t("Tanya Coach AI")}</button>
               <span className="text-[10px] text-muted-foreground/80">
                 Saran cepat, bukan jawaban otomatis
               </span>
@@ -1103,7 +1094,7 @@ export function NegotiationChat({
                 }}
                 rows={1}
                 placeholder={
-                  locked ? "Sesi sedang dievaluasi…" : "Tulis respons negosiasi…"
+                  locked ? t("Sesi sedang dievaluasi…") : t("Tulis respons negosiasi…")
                 }
                 disabled={locked}
                 maxLength={MAX_CHARS}
@@ -1129,7 +1120,7 @@ export function NegotiationChat({
                   isListening
                     ? "Berhenti merekam"
                     : isTranscribing
-                      ? "Mentranskripsi suara..."
+                      ? t("Mentranskripsi suara...")
                       : "Input suara"
                 }
               >
@@ -1161,9 +1152,9 @@ export function NegotiationChat({
                   )}
                   <span className="truncate">
                     {isTranscribing
-                      ? "Mentranskripsi suara..."
+                      ? t("Mentranskripsi suara...")
                       : isListening
-                        ? "Merekam... tekan mikrofon untuk berhenti"
+                        ? t("Merekam... tekan mikrofon untuk berhenti")
                         : ""}
                   </span>
                 </span>
@@ -1190,10 +1181,7 @@ export function NegotiationChat({
                 <p className="mt-4 font-display text-lg font-bold text-foreground">
                   AI sedang menilai negosiasi Anda
                 </p>
-                <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
-                  Transkrip dianalisis dengan 5 aspek rubrik. Proses ini biasanya
-                  memakan waktu 10 sampai 20 detik.
-                </p>
+                <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{t("Transkrip dianalisis dengan 5 aspek rubrik. Proses ini biasanya memakan waktu 10 sampai 20 detik.")}</p>
                 <div className="mt-4 flex items-center justify-center gap-1.5">
                   <span className="h-1.5 w-1.5 animate-pulse-soft rounded-full bg-primary/50" />
                   <span className="h-1.5 w-1.5 animate-pulse-soft rounded-full bg-primary/50 [animation-delay:150ms]" />
@@ -1233,9 +1221,7 @@ export function NegotiationChat({
               <div className="mx-auto h-1 w-10 rounded-full bg-border" />
               <div className="mt-2 flex items-start justify-between gap-4">
                 <div>
-                  <h2 className="font-display text-lg font-bold text-foreground">
-                    Detail Skenario
-                  </h2>
+                  <h2 className="font-display text-lg font-bold text-foreground">{t("Detail Skenario")}</h2>
                   <p className="mt-0.5 text-xs text-muted-foreground">
                     Konteks, strategi, dan rubrik penilaian
                   </p>
@@ -1265,10 +1251,10 @@ export function NegotiationChat({
                   </span>
                   <div className="min-w-0">
                     <p className="text-xs font-semibold text-foreground">
-                      Bahasa AI
+                      {t("Bahasa AI")}
                     </p>
                     <p className="truncate text-[10px] text-muted-foreground">
-                      Balasan, evaluasi, dan transkripsi
+                      {t("Balasan, evaluasi, dan transkripsi")}
                     </p>
                   </div>
                 </div>
@@ -1320,9 +1306,7 @@ export function NegotiationChat({
                   disabled={locked}
                   className="flex w-full items-center justify-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700 transition-colors active:bg-rose-100 disabled:opacity-40 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-300 dark:active:bg-rose-500/20"
                 >
-                  <CircleStop className="h-4 w-4" />
-                  Selesaikan &amp; lihat evaluasi
-                </button>
+                  <CircleStop className="h-4 w-4" />{t("Selesaikan &amp; lihat evaluasi")}</button>
                 <p className="mt-2 text-center text-[10px] text-muted-foreground">
                   Sesi juga berakhir otomatis saat deal atau buntu.
                 </p>
@@ -1342,9 +1326,7 @@ export function NegotiationChat({
               </span>
               <div>
                 <DialogTitle className="text-lg">Coach AI</DialogTitle>
-                <DialogDescription className="mt-0.5 text-xs">
-                  Saran kontekstual untuk balasan berikutnya.
-                </DialogDescription>
+                <DialogDescription className="mt-0.5 text-xs">{t("Saran kontekstual untuk balasan berikutnya.")}</DialogDescription>
               </div>
             </div>
           </DialogHeader>
@@ -1354,7 +1336,7 @@ export function NegotiationChat({
               {product.name}
             </span>
             <span className="rounded-full border border-brand-teal/25 bg-brand-teal/10 px-2 py-1 text-[10px] font-medium text-brand-navy dark:text-brand-mint">
-              Level {diff.label}
+              Level {t(diff.label)}
             </span>
             <span className="rounded-full border border-border/70 bg-muted/60 px-2 py-1 text-[10px] font-medium text-muted-foreground">
               {partner.shortLabel}
@@ -1376,14 +1358,14 @@ export function NegotiationChat({
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-1.5">
                       <span className="rounded-full bg-brand-teal/10 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-brand-navy dark:text-brand-mint">
-                        {suggestion.tag}
+                        {t(suggestion.tag)}
                       </span>
                       <p className="text-xs font-bold text-foreground">
                         {suggestion.title}
                       </p>
                       {suggestion.id === coachFocus && (
                         <span className="rounded-full bg-amber-100 px-1.5 py-0.5 text-[9px] font-semibold text-amber-800 dark:bg-amber-400/15 dark:text-amber-300">
-                          Disarankan
+                          {t("Disarankan")}
                         </span>
                       )}
                     </div>
@@ -1396,7 +1378,7 @@ export function NegotiationChat({
                   </div>
                 </div>
                 <span className="mt-2 flex items-center justify-end gap-1 text-[10px] font-semibold text-brand-navy dark:text-brand-mint">
-                  Masukkan ke chat
+                  {t("Masukkan ke chat")}
                   <ChevronRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
                 </span>
               </button>
@@ -1410,12 +1392,8 @@ export function NegotiationChat({
                 setCoachOpen(false);
                 setInfoOpen(true);
               }}
-            >
-              Lihat strategi lengkap
-            </Button>
-            <Button variant="ghost" onClick={() => setCoachOpen(false)}>
-              Tutup
-            </Button>
+            >{t("Lihat strategi lengkap")}</Button>
+            <Button variant="ghost" onClick={() => setCoachOpen(false)}>{t("Tutup")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -1427,7 +1405,7 @@ export function NegotiationChat({
             <div className="mb-2 grid h-11 w-11 place-items-center rounded-full bg-rose-50 text-rose-600">
               <CircleStop className="h-5 w-5" />
             </div>
-            <DialogTitle>Selesaikan &amp; lihat evaluasi deal?</DialogTitle>
+            <DialogTitle>{t("Selesaikan &amp; lihat evaluasi deal?")}</DialogTitle>
             <DialogDescription>
               Percakapan akan ditutup dan AI menilai seluruh transkrip dengan
               rubrik 5 aspek. Hasilnya langsung tersedia di halaman evaluasi.
@@ -1435,20 +1413,20 @@ export function NegotiationChat({
           </DialogHeader>
 
           <div className="rounded-xl border border-border bg-muted/50 p-3.5 text-xs leading-relaxed text-muted-foreground">
-            <p className="font-semibold text-foreground">Ringkasan sesi</p>
+            <p className="font-semibold text-foreground">{t("Ringkasan sesi")}</p>
             <div className="mt-2 space-y-1.5">
               <div className="flex justify-between gap-3">
                 <span>Produk</span>
                 <span className="truncate font-medium text-foreground">{product.name}</span>
               </div>
               <div className="flex justify-between gap-3">
-                <span>Mitra</span>
+                <span>{t("Mitra")}</span>
                 <span className="font-medium text-foreground">
                   {partner.shortLabel}, {diff.label}
                 </span>
               </div>
               <div className="flex justify-between gap-3">
-                <span>Pesan Anda</span>
+                <span>{t("Pesan Anda")}</span>
                 <span className="font-medium text-foreground">
                   {messages.filter((message) => message.role === "user").length} pesan
                 </span>
@@ -1465,9 +1443,7 @@ export function NegotiationChat({
           )}
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setEndOpen(false)}>
-              Lanjutkan negosiasi
-            </Button>
+            <Button variant="outline" onClick={() => setEndOpen(false)}>{t("Lanjutkan negosiasi")}</Button>
             <Button
               onClick={handleManualEnd}
               disabled={isEvaluating || !hasUserMessage}
@@ -1480,9 +1456,7 @@ export function NegotiationChat({
                 </>
               ) : (
                 <>
-                  <CircleStop className="h-4 w-4" />
-                  Selesaikan &amp; Lihat Evaluasi Deal
-                </>
+                  <CircleStop className="h-4 w-4" />{t("Selesaikan &amp; Lihat Evaluasi Deal")}</>
               )}
             </Button>
           </DialogFooter>

@@ -20,6 +20,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DIFFICULTY_META, PARTNER_META } from "@/lib/ai/personas";
+import { useLanguage } from "@/lib/i18n";
 import { listLocalSessions, type LocalSession } from "@/lib/local-store";
 import { formatDate, formatRelative, formatRupiah } from "@/lib/utils";
 
@@ -30,6 +31,7 @@ function partnerIcon(type: LocalSession["partner_type"]) {
 }
 
 export function LocalDashboard() {
+  const { t } = useLanguage();
   const [sessions, setSessions] = useState<LocalSession[] | null>(null);
 
   useEffect(() => {
@@ -73,11 +75,12 @@ export function LocalDashboard() {
               {formatDate(new Date())}
             </p>
             <h1 className="mt-3 font-display text-3xl font-semibold tracking-tight text-cream sm:text-4xl">
-              Meja negosiasi
+              {t("Meja negosiasi")}
             </h1>
             <p className="mt-2 max-w-xl text-sm leading-relaxed text-cream/70">
-              Latih negosiasi tanpa hambatan login. Semua sesi tersimpan di
-              browser ini.
+              {t(
+                "Latih negosiasi tanpa hambatan login. Semua sesi tersimpan di browser ini."
+              )}
             </p>
           </div>
           <div className="flex shrink-0 flex-wrap items-center gap-2">
@@ -86,7 +89,7 @@ export function LocalDashboard() {
               variant="outline"
               className="hidden border-white/20 bg-white/10 text-cream hover:bg-white/20 hover:text-cream sm:inline-flex"
             >
-              <Link href="/evaluasi">Evaluasi</Link>
+              <Link href="/evaluasi">{t("Riwayat")}</Link>
             </Button>
             <Button
               asChild
@@ -94,7 +97,7 @@ export function LocalDashboard() {
             >
               <Link href="/simulator">
                 <Plus className="h-4 w-4" />
-                Simulasi Baru
+                {t("Simulasi Baru")}
               </Link>
             </Button>
           </div>
@@ -112,7 +115,7 @@ export function LocalDashboard() {
             </span>
             <div>
               <p className="text-sm font-bold text-brand-navy">
-                Ada sesi yang belum selesai
+                {t("Ada sesi yang belum selesai")}
               </p>
               <p className="mt-0.5 text-xs text-brand-navy/70">
                 {active.product.name},{" "}
@@ -122,17 +125,23 @@ export function LocalDashboard() {
             </div>
           </div>
           <span className="inline-flex items-center gap-1.5 self-start rounded-full bg-brand-navy px-3 py-1.5 text-xs font-semibold text-white">
-            Lanjutkan <ArrowRight className="h-3.5 w-3.5" />
+            {t("Lanjutkan")} <ArrowRight className="h-3.5 w-3.5" />
           </span>
         </Link>
       )}
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {[
-          ["Total sesi", String(stats.total)],
-          ["Sesi dinilai", String(stats.evaluated)],
-          ["Rata-rata skor", stats.average !== null ? `${stats.average}/100` : "Belum ada"],
-          ["Skor terbaik", stats.best !== null ? `${stats.best}/100` : "Belum ada"],
+          [t("Total sesi"), String(stats.total)],
+          [t("Sesi dinilai"), String(stats.evaluated)],
+          [
+            t("Rata-rata skor"),
+            stats.average !== null ? `${stats.average}/100` : t("Belum ada"),
+          ],
+          [
+            t("Skor terbaik"),
+            stats.best !== null ? `${stats.best}/100` : t("Belum ada"),
+          ],
         ].map(([label, value]) => (
           <div key={label} className="rounded-2xl border border-border/80 bg-card p-4">
             <p className="text-[11px] font-semibold text-muted-foreground">{label}</p>
@@ -146,18 +155,18 @@ export function LocalDashboard() {
       <section className="mt-8">
         <div className="mb-4 flex items-end justify-between gap-4">
           <h2 className="font-display text-xl font-bold text-foreground">
-            Sesi latihan Anda
+            {t("Sesi latihan Anda")}
           </h2>
           {sessions && sessions.length > 0 ? (
             <span className="text-xs text-muted-foreground">
-              {sessions.length} sesi
+              {t("{count} sesi", { count: sessions.length })}
             </span>
           ) : null}
         </div>
 
         {sessions === null ? (
           <div className="rounded-2xl border border-border bg-card p-8 text-center text-sm text-muted-foreground">
-            Memuat sesi lokal...
+            {t("Memuat sesi lokal...")}
           </div>
         ) : sessions.length === 0 ? (
           <div className="rounded-3xl border border-dashed border-border bg-card p-8 text-center sm:p-12">
@@ -165,15 +174,16 @@ export function LocalDashboard() {
               <SparklesIcon />
             </div>
             <h3 className="mt-5 font-display text-2xl font-bold text-foreground">
-              Belum ada sesi latihan
+              {t("Belum ada sesi latihan")}
             </h3>
             <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">
-              Mulai dengan satu produk dan satu jenis mitra. Sesi dan skor akan
-              tersimpan di browser ini tanpa perlu login.
+              {t(
+                "Mulai dengan satu produk dan satu jenis mitra. Sesi dan skor akan tersimpan di browser ini tanpa perlu login."
+              )}
             </p>
             <Button asChild size="lg" className="mt-6">
               <LocalDemoLink href="/simulator">
-                Mulai simulasi pertama
+                {t("Mulai simulasi pertama")}
               </LocalDemoLink>
             </Button>
           </div>
@@ -218,21 +228,23 @@ export function LocalDashboard() {
                           className="text-[9px]"
                         >
                           {session.status === "active"
-                            ? "Berlangsung"
+                            ? t("Berlangsung")
                             : session.outcome === "deal"
-                              ? "Sepakat"
-                              : "Selesai"}
+                              ? t("Sepakat")
+                              : t("Selesai")}
                         </Badge>
                       </div>
                       <p className="mt-1 text-[11px] text-muted-foreground">
-                        {partner.shortLabel}, {difficulty.label},{" "}
+                        {t(partner.shortLabel)}, {t(difficulty.label)},{" "}
                         {formatRupiah(session.product.base_price)},{" "}
                         {formatRelative(session.created_at)}
                       </p>
                     </div>
                   </div>
                   <span className="inline-flex items-center gap-2 self-end text-xs font-semibold text-primary sm:self-auto">
-                    {session.status === "completed" ? "Lihat evaluasi" : "Lanjutkan"}
+                    {session.status === "completed"
+                      ? t("Lihat evaluasi")
+                      : t("Lanjutkan")}
                     <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
                   </span>
                 </Link>

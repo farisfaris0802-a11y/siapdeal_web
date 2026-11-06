@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import {
   ArrowRight,
@@ -21,6 +23,7 @@ import {
 
 import { DIFFICULTY_META, PARTNER_META, RUBRIC_ASPECTS } from "@/lib/ai/personas";
 import { sanitizeAssistantText } from "@/lib/ai/sanitize";
+import { useLanguage } from "@/lib/i18n";
 import type {
   ChatMessage,
   Difficulty,
@@ -84,6 +87,7 @@ export function EvaluationView({
   difficulty: Difficulty;
   messages: ChatMessage[];
 }) {
+  const { t } = useLanguage();
   const partner = PARTNER_META[partnerType];
   const diff = DIFFICULTY_META[difficulty];
   const scores = evaluation.rubric_scores;
@@ -100,7 +104,7 @@ export function EvaluationView({
     return {
       key: aspect.key,
       label: aspect.label,
-      shortLabel: meta?.shortLabel ?? aspect.label,
+      shortLabel: t(meta?.shortLabel ?? aspect.label),
       score: aspect.score,
     };
   });
@@ -136,34 +140,39 @@ export function EvaluationView({
                 )}
               >
                 <VerdictIcon className="h-3.5 w-3.5" />
-                {verdict.label}
+                {t(verdict.label)}
               </Badge>
               <span className={cn("text-xs font-semibold", tone.color)}>
                 Nilai rata-rata {scores.overall}/100
               </span>
             </div>
 
-            <p className="mt-4 text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
-              Ringkasan hasil
-            </p>
+            <p className="mt-4 text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">{t("Ringkasan hasil")}</p>
             <p className="mt-1.5 max-w-3xl text-sm font-normal leading-relaxed text-foreground sm:text-[15px]">
               {scores.summary || verdict.description}
             </p>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Hasil evaluasi transkrip negosiasi {product.name} dengan{" "}
-              {partner.buyerName} ({partner.shortLabel}), level {diff.label.toLowerCase()}.
+              {t(
+                "Hasil evaluasi transkrip negosiasi {product} dengan {buyer} ({partner}), level {level}.",
+                {
+                  product: product.name,
+                  buyer: partner.buyerName,
+                  partner: t(partner.shortLabel),
+                  level: t(diff.label).toLowerCase(),
+                }
+              )}
             </p>
 
             <div className="mt-4 flex flex-wrap items-center gap-2">
               <Badge variant={outcome.variant} className="gap-1">
                 <outcome.icon className="h-3 w-3" />
-                {outcome.label}
+                {t(outcome.label)}
               </Badge>
               <Badge variant="outline" className="bg-card">
-                {partner.shortLabel}
+                {t(partner.shortLabel)}
               </Badge>
               <Badge variant="outline" className="bg-card">
-                {diff.label}
+                {t(diff.label)}
               </Badge>
               <span className="text-[11px] text-muted-foreground">
                 {formatDate(session.created_at, true)}
@@ -215,9 +224,7 @@ export function EvaluationView({
                 Radar 5 aspek
               </h3>
             </div>
-            <Badge variant="outline" className="bg-card text-[10px]">
-              Skala 0 sampai 100
-            </Badge>
+            <Badge variant="outline" className="bg-card text-[10px]">{t("Skala 0 sampai 100")}</Badge>
           </div>
           <div className="mt-2">
             <ScoreRadar data={radarData} />
@@ -226,22 +233,26 @@ export function EvaluationView({
 
         <div className="relative overflow-hidden rounded-2xl bg-primary p-5 text-primary-foreground shadow-soft sm:p-6">
           <div className="relative">
-            <p className="text-[10px] font-bold text-accent">
-              Cara membaca hasil
-            </p>
+            <p className="text-[10px] font-bold text-accent">{t("Cara membaca hasil")}</p>
             <h3 className="mt-2 text-balance font-display text-xl font-bold leading-snug">
               {strongest && weakest && strongest.score - weakest.score >= 15
-                ? `Kekuatan Anda ada di ${strongest.label.toLowerCase()}, tetapi ${weakest.label.toLowerCase()} masih menahan skor.`
-                : "Profil Anda cukup seimbang, sekarang tinggal mempertajam konsistensi."}
+                ? t(
+                    "Kekuatan Anda ada di {strong}, tetapi {weak} masih menahan skor.",
+                    {
+                      strong: strongest.label.toLowerCase(),
+                      weak: weakest.label.toLowerCase(),
+                    }
+                  )
+                : t(
+                    "Profil Anda cukup seimbang, sekarang tinggal mempertajam konsistensi."
+                  )}
             </h3>
 
             <div className="mt-5 grid gap-2.5 sm:grid-cols-2">
               {strongest && (
                 <div className="rounded-xl border border-white/10 bg-white/[0.06] p-3.5">
                   <p className="flex items-center gap-1.5 text-[10px] font-bold text-brand-mint">
-                    <TrendingUp className="h-3.5 w-3.5" />
-                    Terkuat
-                  </p>
+                    <TrendingUp className="h-3.5 w-3.5" />{t("Terkuat")}</p>
                   <p className="mt-1.5 text-sm font-bold">{strongest.label}</p>
                   <p className="mt-0.5 font-display text-2xl font-bold text-accent">
                     {strongest.score}
@@ -252,9 +263,7 @@ export function EvaluationView({
               {weakest && (
                 <div className="rounded-xl border border-white/10 bg-white/[0.06] p-3.5">
                   <p className="flex items-center gap-1.5 text-[10px] font-bold text-brand-mint">
-                    <Target className="h-3.5 w-3.5" />
-                    Prioritas latihan
-                  </p>
+                    <Target className="h-3.5 w-3.5" />{t("Prioritas latihan")}</p>
                   <p className="mt-1.5 text-sm font-bold">{weakest.label}</p>
                   <p className="mt-0.5 font-display text-2xl font-bold text-accent">
                     {weakest.score}
@@ -265,8 +274,8 @@ export function EvaluationView({
             </div>
 
             <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.06] p-3.5 text-[11px] leading-relaxed text-primary-foreground/70">
-              <span className="font-semibold text-white">Fokus berikutnya: </span>
-              {weakest?.feedback ?? verdict.description}
+              <span className="font-semibold text-white">{t("Fokus berikutnya")}: </span>
+              {weakest?.feedback ?? t(verdict.description)}
             </div>
           </div>
         </div>
@@ -276,14 +285,10 @@ export function EvaluationView({
       <section>
         <div className="mb-4 flex items-end justify-between gap-4">
           <div>
-            <p className="text-[10px] font-bold text-muted-foreground">
-              Rubrik tetap
-            </p>
-            <h3 className="mt-1 font-display text-xl font-bold text-foreground">
-              Penilaian per aspek
-            </h3>
+            <p className="text-[10px] font-bold text-muted-foreground">{t("Rubrik tetap")}</p>
+            <h3 className="mt-1 font-display text-xl font-bold text-foreground">{t("Penilaian per aspek")}</h3>
           </div>
-          <span className="text-xs text-muted-foreground">Skala 0 sampai 100</span>
+          <span className="text-xs text-muted-foreground">{t("Skala 0 sampai 100")}</span>
         </div>
 
         <div className="grid gap-3.5 md:grid-cols-2">
@@ -352,7 +357,7 @@ export function EvaluationView({
             <span className="grid h-8 w-8 place-items-center rounded-xl bg-brand-teal/15 text-brand-navy">
               <ThumbsUp className="h-4 w-4" />
             </span>
-            <h3 className="font-display text-lg font-bold text-brand-navy">Kekuatan Anda</h3>
+            <h3 className="font-display text-lg font-bold text-brand-navy">{t("Kekuatan Anda")}</h3>
           </div>
           <ul className="mt-4 space-y-2.5">
             {evaluation.strengths.map((item, index) => (
@@ -369,7 +374,7 @@ export function EvaluationView({
             <span className="grid h-8 w-8 place-items-center rounded-xl bg-rose-100 text-rose-800">
               <ThumbsDown className="h-4 w-4" />
             </span>
-            <h3 className="font-display text-lg font-bold text-rose-950">Yang perlu diperbaiki</h3>
+            <h3 className="font-display text-lg font-bold text-rose-950">{t("Yang perlu diperbaiki")}</h3>
           </div>
           <ul className="mt-4 space-y-2.5">
             {evaluation.weaknesses.map((item, index) => (
@@ -386,12 +391,8 @@ export function EvaluationView({
       <section>
         <div className="mb-4 flex items-end justify-between gap-4">
           <div>
-            <p className="text-[10px] font-bold text-muted-foreground">
-              Saran perbaikan
-            </p>
-            <h3 className="mt-1 font-display text-xl font-bold text-foreground">
-              Kalimat yang lebih kuat untuk momen yang sama
-            </h3>
+            <p className="text-[10px] font-bold text-muted-foreground">{t("Saran perbaikan")}</p>
+            <h3 className="mt-1 font-display text-xl font-bold text-foreground">{t("Kalimat yang lebih kuat untuk momen yang sama")}</h3>
           </div>
           <Badge variant="outline" className="hidden shrink-0 gap-1 bg-card sm:inline-flex">
             <Sparkles className="h-3 w-3 text-primary" />
@@ -412,31 +413,25 @@ export function EvaluationView({
                   </span>
                   <span className="text-xs font-bold text-foreground">{suggestion.aspect_label}</span>
                 </div>
-                <Badge variant="muted" className="text-[10px]">
-                  Saran AI
-                </Badge>
+                <Badge variant="muted" className="text-[10px]">{t("Saran AI")}</Badge>
               </div>
 
               <div className="grid gap-0 divide-y divide-border/60 sm:grid-cols-2 sm:divide-x sm:divide-y-0">
                 <div className="p-5">
                   <p className="flex items-center gap-1.5 text-[10px] font-bold text-rose-700">
-                    <Quote className="h-3 w-3" />
-                    Respons asli Anda
-                  </p>
+                    <Quote className="h-3 w-3" />{t("Respons asli Anda")}</p>
                   <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">
                     “{suggestion.original}”
                   </p>
                 </div>
                 <div className="bg-brand-teal/10 p-5">
                   <p className="flex items-center gap-1.5 text-[10px] font-bold text-brand-navy">
-                    <Lightbulb className="h-3 w-3" />
-                    Versi yang lebih kuat
-                  </p>
+                    <Lightbulb className="h-3 w-3" />{t("Versi yang lebih kuat")}</p>
                   <p className="mt-2.5 text-sm font-normal leading-relaxed text-brand-navy">
                     “{suggestion.improved}”
                   </p>
                   <p className="mt-3 border-t border-brand-teal/25 pt-2.5 text-[11px] leading-relaxed text-brand-navy/75">
-                    <span className="font-semibold">Mengapa: </span>
+                    <span className="font-semibold">{t("Mengapa:")} </span>
                     {suggestion.reason}
                   </p>
                 </div>
@@ -455,7 +450,7 @@ export function EvaluationView({
                 <MessageSquareQuote className="h-4 w-4" />
               </span>
               <div>
-                <p className="text-sm font-bold text-foreground">Lihat transkrip lengkap</p>
+                <p className="text-sm font-bold text-foreground">{t("Lihat transkrip lengkap")}</p>
                 <p className="text-[11px] text-muted-foreground">
                   {messages.length} pesan, buka untuk meninjau seluruh percakapan
                 </p>
@@ -499,32 +494,20 @@ export function EvaluationView({
       </section>
 
       <div className="flex items-start gap-2 rounded-xl border border-border/60 bg-muted/50 px-4 py-3 text-[11px] leading-relaxed text-muted-foreground">
-        <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-brand-navy" />
-        Penilaian ini dihasilkan AI berdasarkan rubrik tetap dan bersifat panduan
-        latihan. Hasil negosiasi nyata dapat berbeda tergantung konteks dan
-        dinamika hubungan bisnis.
-      </div>
+        <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-brand-navy" />{t("Penilaian ini dihasilkan AI berdasarkan rubrik tetap dan bersifat panduan latihan. Hasil negosiasi nyata dapat berbeda tergantung konteks dan dinamika hubungan bisnis.")}</div>
 
       {/* CTA */}
       <section className="relative overflow-hidden rounded-3xl bg-primary p-6 text-primary-foreground shadow-lift sm:p-8">
         <div className="relative flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
           <div>
-            <p className="text-[10px] font-bold text-accent">
-              Terus berlatih
-            </p>
-            <h3 className="mt-2 max-w-lg text-balance font-display text-2xl font-bold leading-tight">
-              Coba skenario yang sama dengan strategi baru.
-            </h3>
-            <p className="mt-1.5 text-sm text-primary-foreground/65">
-              Bandingkan skor dan lihat perkembangan Anda di dashboard.
-            </p>
+            <p className="text-[10px] font-bold text-accent">{t("Terus berlatih")}</p>
+            <h3 className="mt-2 max-w-lg text-balance font-display text-2xl font-bold leading-tight">{t("Coba skenario yang sama dengan strategi baru.")}</h3>
+            <p className="mt-1.5 text-sm text-primary-foreground/65">{t("Bandingkan skor dan lihat perkembangan Anda di dashboard.")}</p>
           </div>
           <div className="flex flex-col gap-2 sm:flex-row">
             <Button asChild className="bg-accent text-accent-foreground hover:bg-accent/90">
               <Link href={`/simulasi/baru?${retryParams.toString()}`}>
-                <RotateCcw className="h-4 w-4" />
-                Ulangi skenario
-              </Link>
+                <RotateCcw className="h-4 w-4" />{t("Ulangi skenario")}</Link>
             </Button>
             <Button
               asChild
@@ -532,9 +515,7 @@ export function EvaluationView({
               className="border-white/20 bg-transparent text-white hover:bg-white/10 hover:text-white"
             >
               <Link href="/simulasi/baru">
-                <Plus className="h-4 w-4" />
-                Skenario baru
-              </Link>
+                <Plus className="h-4 w-4" />{t("Skenario baru")}</Link>
             </Button>
           </div>
         </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   AlertCircle,
@@ -30,12 +30,8 @@ import {
   PARTNER_TYPES,
 } from "@/lib/ai/personas";
 import { CATEGORY_LABEL, PRODUCT_CATEGORIES, SAMPLE_PRODUCTS } from "@/lib/catalog";
-import type {
-  Difficulty,
-  Language,
-  PartnerType,
-  ProductCategory,
-} from "@/lib/types";
+import { useLanguage } from "@/lib/i18n";
+import type { Difficulty, PartnerType, ProductCategory } from "@/lib/types";
 import { cn, formatRupiah } from "@/lib/utils";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -58,16 +54,17 @@ const partnerOptions: {
 const difficultyOptions: Difficulty[] = ["easy", "medium", "hard"];
 
 function SubmitButton({ pending = false }: { pending?: boolean }) {
+  const { t } = useLanguage();
   return (
     <Button type="submit" size="lg" className="w-full" disabled={pending}>
       {pending ? (
         <>
           <Loader2 className="h-4 w-4 animate-spin" />
-          Menyiapkan pembeli virtual...
+          {t("Menyiapkan pembeli virtual...")}
         </>
       ) : (
         <>
-          Mulai simulasi
+          {t("Mulai simulasi")}
           <ArrowRight className="h-4 w-4" />
         </>
       )}
@@ -96,6 +93,7 @@ export function ScenarioForm({
   demo?: boolean;
 }) {
   const router = useRouter();
+  const { language, setLanguage, t } = useLanguage();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -123,16 +121,6 @@ export function ScenarioForm({
   const [category, setCategory] = useState<ProductCategory>(initialCategory);
   const [partner, setPartner] = useState<PartnerType>(initialPartner);
   const [difficulty, setDifficulty] = useState<Difficulty>(initialDifficulty);
-  const [language, setLanguage] = useState<Language>("id");
-
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem("siapdeal:ai-language");
-      if (stored === "en" || stored === "id") setLanguage(stored);
-    } catch {
-      // Mode privat bisa memblokir localStorage.
-    }
-  }, []);
 
   const partnerMeta = PARTNER_META[partner];
   const difficultyMeta = DIFFICULTY_META[difficulty];
@@ -187,11 +175,6 @@ export function ScenarioForm({
         difficulty,
         language,
       });
-      try {
-        localStorage.setItem("siapdeal:ai-language", language);
-      } catch {
-        // Abaikan jika localStorage diblokir.
-      }
       router.push(`/simulasi/${session.id}`);
     } catch {
       setPending(false);
@@ -216,7 +199,7 @@ export function ScenarioForm({
               <Sparkles className="h-4 w-4 text-brand-navy" />
             </span>
             <div className="text-xs leading-relaxed">
-              <p className="text-sm font-bold">Mode Demo aktif, skenario contoh sudah terisi</p>
+              <p className="text-sm font-bold">{t("Mode Demo aktif, skenario contoh sudah terisi")}</p>
               <p className="mt-0.5 text-brand-navy/70">
                 Anda bisa langsung menekan <strong>Mulai simulasi</strong>, atau
                 ubah produk, mitra, dan level sesuai skenario yang ingin diuji.
@@ -233,20 +216,15 @@ export function ScenarioForm({
                 <Package className="h-[18px] w-[18px]" />
               </span>
               <div>
-                <CardTitle>1. Data produk</CardTitle>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  Informasi ini menjadi dasar pembeli virtual menawar dan
-                  menilai penawaran Anda.
-                </p>
+                <CardTitle>{t("1. Data produk")}</CardTitle>
+                <p className="mt-1 text-sm text-muted-foreground">{t("Informasi ini menjadi dasar pembeli virtual menawar dan menilai penawaran Anda.")}</p>
               </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-5 pt-6">
             <div className="rounded-2xl border border-dashed border-primary/25 bg-muted/50 p-3.5">
               <p className="flex items-center gap-1.5 text-[11px] font-bold text-foreground">
-                <Wand2 className="h-3.5 w-3.5 text-primary" />
-                Isi cepat dengan produk UMKM Bali
-              </p>
+                <Wand2 className="h-3.5 w-3.5 text-primary" />{t("Isi cepat dengan produk UMKM Bali")}</p>
               <div className="mt-2.5 flex flex-wrap gap-2">
                 {SAMPLE_PRODUCTS.map((sample) => (
                   <button
@@ -263,7 +241,7 @@ export function ScenarioForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="name">Nama produk</Label>
+              <Label htmlFor="name">{t("Nama produk")}</Label>
               <Input
                 id="name"
                 name="name"
@@ -273,13 +251,11 @@ export function ScenarioForm({
                 maxLength={120}
                 required
               />
-              <p className="text-[11px] text-muted-foreground">
-                Gunakan nama yang akan Anda sebut saat presentasi ke mitra.
-              </p>
+              <p className="text-[11px] text-muted-foreground">{t("Gunakan nama yang akan Anda sebut saat presentasi ke mitra.")}</p>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="base_price">Harga jual dasar (per unit)</Label>
+              <Label htmlFor="base_price">{t("Harga jual dasar (per unit)")}</Label>
               <div className="relative">
                 <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-semibold text-muted-foreground">
                   Rp
@@ -299,7 +275,7 @@ export function ScenarioForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="category">Kategori produk</Label>
+              <Label htmlFor="category">{t("Kategori produk")}</Label>
               <select
                 id="category"
                 name="category"
@@ -311,17 +287,15 @@ export function ScenarioForm({
               >
                 {PRODUCT_CATEGORIES.map((item) => (
                   <option key={item.value} value={item.value}>
-                    {item.label}
+                    {t(item.label)}
                   </option>
                 ))}
               </select>
-              <p className="text-[11px] text-muted-foreground">
-                Membantu AI menyesuaikan keberatan dan benchmark margin.
-              </p>
+              <p className="text-[11px] text-muted-foreground">{t("Membantu AI menyesuaikan keberatan dan benchmark margin.")}</p>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="usp">Keunggulan / USP produk</Label>
+              <Label htmlFor="usp">{t("Keunggulan / USP produk")}</Label>
               <Textarea
                 id="usp"
                 name="usp"
@@ -334,10 +308,7 @@ export function ScenarioForm({
               />
               <div className="flex items-start justify-between gap-3 text-[11px] text-muted-foreground">
                 <span className="flex items-start gap-1.5">
-                  <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-                  Semakin konkret bukti dan manfaatnya, semakin tajam penilaian
-                  value proposition Anda.
-                </span>
+                  <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />{t("Semakin konkret bukti dan manfaatnya, semakin tajam penilaian value proposition Anda.")}</span>
                 <span className="shrink-0 tabular-nums">{usp.length}/1200</span>
               </div>
             </div>
@@ -352,7 +323,7 @@ export function ScenarioForm({
                 <Store className="h-[18px] w-[18px]" />
               </span>
               <div>
-                <CardTitle>2. Jenis mitra</CardTitle>
+                <CardTitle>{t("2. Jenis mitra")}</CardTitle>
                 <p className="mt-1 text-sm text-muted-foreground">
                   Pilih tipe pembeli yang ingin Anda hadapi.
                 </p>
@@ -399,13 +370,13 @@ export function ScenarioForm({
                         {selected && <Check className="h-3 w-3" strokeWidth={3} />}
                       </span>
                     </div>
-                    <p className="mt-3 text-sm font-bold leading-snug text-foreground">{meta.label}</p>
+                    <p className="mt-3 text-sm font-bold leading-snug text-foreground">{t(meta.label)}</p>
                     <p className="mt-1 flex items-center gap-1 text-[10px] font-semibold text-muted-foreground">
                       <MapPin className="h-3 w-3" />
                       {meta.location}
                     </p>
                     <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
-                      {meta.description}
+                      {t(meta.description)}
                     </p>
                   </label>
                 );
@@ -415,10 +386,11 @@ export function ScenarioForm({
             <div className="mt-4 flex items-center gap-2.5 rounded-xl border border-border/70 bg-muted/50 px-3.5 py-2.5 text-xs text-muted-foreground">
               <PartnerIcon className="h-4 w-4 text-primary" />
               <span>
-                Anda akan bernegosiasi dengan{" "}
-                <span className="font-semibold text-foreground">{partnerMeta.buyerName}</span>
-                {", "}
-                {partnerMeta.buyerRole} di {partnerMeta.company}.
+                {t("Anda akan bernegosiasi dengan {buyer}, {role} di {company}.", {
+                  buyer: partnerMeta.buyerName,
+                  role: partnerMeta.buyerRole,
+                  company: partnerMeta.company,
+                })}
               </span>
             </div>
           </CardContent>
@@ -432,10 +404,8 @@ export function ScenarioForm({
                 <Target className="h-[18px] w-[18px]" />
               </span>
               <div>
-                <CardTitle>3. Tingkat kesulitan</CardTitle>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  Menentukan seberapa keras pembeli menekan harga dan syarat.
-                </p>
+                <CardTitle>{t("3. Tingkat kesulitan")}</CardTitle>
+                <p className="mt-1 text-sm text-muted-foreground">{t("Menentukan seberapa keras pembeli menekan harga dan syarat.")}</p>
               </div>
             </div>
           </CardHeader>
@@ -471,7 +441,7 @@ export function ScenarioForm({
                     <div className="flex items-center justify-between">
                       <span className="flex items-center gap-2 text-sm font-bold text-foreground">
                         <span className={cn("h-2 w-2 rounded-full", tones[value])} />
-                        {meta.label}
+                        {t(meta.label)}
                       </span>
                       {selected ? (
                         <Check className="h-4 w-4 text-primary" strokeWidth={3} />
@@ -480,7 +450,7 @@ export function ScenarioForm({
                       )}
                     </div>
                     <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
-                      {meta.description}
+                      {t(meta.description)}
                     </p>
                   </label>
                 );
@@ -496,12 +466,8 @@ export function ScenarioForm({
                 <Languages className="h-4 w-4" />
               </span>
               <div>
-                <p className="text-sm font-semibold text-foreground">
-                  Bahasa negosiasi
-                </p>
-                <p className="text-[11px] text-muted-foreground">
-                  Balasan AI, evaluasi, dan transkripsi suara.
-                </p>
+                <p className="text-sm font-semibold text-foreground">{t("Bahasa negosiasi")}</p>
+                <p className="text-[11px] text-muted-foreground">{t("Balasan AI, evaluasi, dan transkripsi suara.")}</p>
               </div>
             </div>
             <div className="inline-flex self-start rounded-full border border-border bg-background p-0.5 sm:self-auto">
@@ -537,9 +503,7 @@ export function ScenarioForm({
 
         <div className="flex flex-col gap-3 rounded-2xl border border-border/70 bg-card p-4 shadow-soft sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <Lock className="h-4 w-4 text-primary" />
-            Data hanya digunakan untuk sesi latihan Anda.
-          </div>
+            <Lock className="h-4 w-4 text-primary" />{t("Data hanya digunakan untuk sesi latihan Anda.")}</div>
           <div className="w-full sm:w-auto sm:min-w-[220px]">
             <SubmitButton pending={pending} />
           </div>
@@ -552,9 +516,7 @@ export function ScenarioForm({
           <div className="pointer-events-none absolute inset-0 grain opacity-20" />
 
           <div className="relative flex items-center justify-between">
-            <p className="text-[10px] font-bold text-white/45">
-              Pratinjau skenario
-            </p>
+            <p className="text-[10px] font-bold text-white/45">{t("Pratinjau skenario")}</p>
             <Badge className="border-white/10 bg-white/10 text-[10px] text-white">
               Live
             </Badge>
@@ -578,14 +540,14 @@ export function ScenarioForm({
             <div className="flex items-start gap-3">
               <Package className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
               <div className="min-w-0">
-                <p className="text-[10px] text-white/40">Produk</p>
+                <p className="text-[10px] text-white/40">{t("Produk")}</p>
                 <p className="truncate font-semibold">{name.trim() || "Belum diisi"}</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
               <div className="min-w-0">
-                <p className="text-[10px] text-white/40">Harga dasar</p>
+                <p className="text-[10px] text-white/40">{t("Harga dasar")}</p>
                 <p className="font-semibold">
                   {priceNumber ? `${formatRupiah(priceNumber)} / unit` : "Belum diisi"}
                 </p>
@@ -594,16 +556,16 @@ export function ScenarioForm({
             <div className="flex items-start gap-3">
               <Package className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
               <div className="min-w-0">
-                <p className="text-[10px] text-white/40">Kategori</p>
-                <p className="font-semibold">{CATEGORY_LABEL[category]}</p>
+                <p className="text-[10px] text-white/40">{t("Kategori")}</p>
+                <p className="font-semibold">{t(CATEGORY_LABEL[category])}</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <Target className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
               <div>
-                <p className="text-[10px] text-white/40">Level</p>
+                <p className="text-[10px] text-white/40">{t("Level")}</p>
                 <p className="font-semibold">
-                  {partnerMeta.shortLabel}, {difficultyMeta.label}
+                  {t(partnerMeta.shortLabel)}, {t(difficultyMeta.label)}
                 </p>
               </div>
             </div>
@@ -611,37 +573,42 @@ export function ScenarioForm({
 
           <div className="relative mt-5 rounded-2xl border border-white/10 bg-white/[0.06] p-4">
             <p className="flex items-center gap-1.5 text-[10px] font-bold text-accent">
-              <MessageSquare className="h-3.5 w-3.5" />
-              Yang akan terjadi
-            </p>
+              <MessageSquare className="h-3.5 w-3.5" />{t("Yang akan terjadi")}</p>
             <ul className="mt-2.5 space-y-2 text-[11px] leading-relaxed text-white/65">
               <li className="flex gap-2">
-                <ChevronRight className="mt-0.5 h-3 w-3 shrink-0 text-accent" />
-                Pembeli membuka percakapan dan meminta penawaran Anda.
-              </li>
+                <ChevronRight className="mt-0.5 h-3 w-3 shrink-0 text-accent" />{t("Pembeli membuka percakapan dan meminta penawaran Anda.")}</li>
               <li className="flex gap-2">
-                <ChevronRight className="mt-0.5 h-3 w-3 shrink-0 text-accent" />
-                Harga, margin, TOP, dan konsinyasi akan ditekan sesuai level.
-              </li>
+                <ChevronRight className="mt-0.5 h-3 w-3 shrink-0 text-accent" />{t("Harga, margin, TOP, dan konsinyasi akan ditekan sesuai level.")}</li>
               <li className="flex gap-2">
-                <ChevronRight className="mt-0.5 h-3 w-3 shrink-0 text-accent" />
-                Sesi berakhir otomatis atau Anda bisa mengakhirinya manual.
-              </li>
+                <ChevronRight className="mt-0.5 h-3 w-3 shrink-0 text-accent" />{t("Sesi berakhir otomatis atau Anda bisa mengakhirinya manual.")}</li>
             </ul>
           </div>
 
           <div className="relative mt-5 flex items-center gap-2 text-[10px] text-white/45">
-            <Clock className="h-3.5 w-3.5" />
-            Estimasi 3 sampai 7 menit, 5 aspek dinilai di akhir sesi
-          </div>
+            <Clock className="h-3.5 w-3.5" />{t("Estimasi 3 sampai 7 menit, 5 aspek dinilai di akhir sesi")}</div>
         </div>
 
         <div className="rounded-2xl border border-border/70 bg-card p-4 text-xs leading-relaxed text-muted-foreground shadow-soft">
-          <p className="font-semibold text-foreground">Tips sebelum mulai</p>
+          <p className="font-semibold text-foreground">{t("Tips sebelum mulai")}</p>
           <ul className="mt-2 space-y-1.5">
-            <li>• Siapkan batas harga terendah Anda, jangan hanya mengandalkan harga dasar.</li>
-            <li>• Pikirkan minimal dua alasan mengapa produk Anda layak mendapat harga tersebut.</li>
-            <li>• Semakin jujur Anda berlatih, semakin berguna evaluasinya.</li>
+            <li>
+              •{" "}
+              {t(
+                "Siapkan batas harga terendah Anda, jangan hanya mengandalkan harga dasar."
+              )}
+            </li>
+            <li>
+              •{" "}
+              {t(
+                "Pikirkan minimal dua alasan mengapa produk Anda layak mendapat harga tersebut."
+              )}
+            </li>
+            <li>
+              •{" "}
+              {t(
+                "Semakin jujur Anda berlatih, semakin berguna evaluasinya."
+              )}
+            </li>
           </ul>
         </div>
       </div>
